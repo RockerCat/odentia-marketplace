@@ -57,7 +57,10 @@
         @unless ($product->exists)
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Imágenes</label>
-                <input type="file" name="images[]" multiple accept="image/*" class="w-full text-sm">
+                <input type="file" name="images[]" multiple accept="image/*" class="block w-full text-sm text-slate-500
+                       file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0
+                       file:bg-teal-700 file:text-white file:font-medium file:cursor-pointer
+                       hover:file:bg-teal-800">
                 <p class="text-xs text-slate-400 mt-1">Puedes seleccionar una o varias imágenes (JPG, PNG — máx. 4MB c/u).</p>
                 @error('images') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                 @error('images.*') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
@@ -99,7 +102,10 @@
                   class="bg-white rounded-xl border border-slate-200 p-4">
                 @csrf
                 <label class="block text-sm font-medium text-slate-700 mb-1">Agregar imágenes</label>
-                <input type="file" name="images[]" id="quick-image-input" multiple accept="image/*" class="w-full text-sm">
+                <input type="file" name="images[]" id="quick-image-input" multiple accept="image/*" class="block w-full text-sm text-slate-500
+                       file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0
+                       file:bg-teal-700 file:text-white file:font-medium file:cursor-pointer
+                       hover:file:bg-teal-800">
                 <p class="text-xs text-slate-400 mt-1">Se guardan automáticamente al elegirlas (JPG, PNG — máx. 4MB c/u).</p>
                 @error('images') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
                 @error('images.*') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
