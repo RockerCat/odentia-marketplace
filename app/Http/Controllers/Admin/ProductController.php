@@ -67,6 +67,18 @@ class ProductController extends Controller
         return back()->with('success', 'Producto eliminado.');
     }
 
+    public function storeImage(Request $request, Product $product)
+    {
+        $request->validate([
+            'images' => ['required', 'array'],
+            'images.*' => ['image', 'max:4096'],
+        ]);
+
+        $this->storeImages($request, $product);
+
+        return back()->with('success', 'Imagen agregada.');
+    }
+
     public function destroyImage(Product $product, ProductImage $image)
     {
         abort_unless($image->product_id === $product->id, 404);

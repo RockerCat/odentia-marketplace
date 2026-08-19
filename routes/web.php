@@ -33,6 +33,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::patch('/pedidos/{order}/estado', [DashboardController::class, 'updateStatus'])->name('orders.updateStatus');
 
     Route::resource('productos', AdminProductController::class)->parameters(['productos' => 'product'])->names('products');
+    Route::post('/productos/{product}/imagenes', [AdminProductController::class, 'storeImage'])->name('products.images.store');
     Route::delete('/productos/{product}/imagenes/{image}', [AdminProductController::class, 'destroyImage'])->name('products.images.destroy');
     Route::resource('categorias', AdminCategoryController::class)->parameters(['categorias' => 'category'])->names('categories');
 });
