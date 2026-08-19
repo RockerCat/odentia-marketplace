@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Product extends Model
@@ -15,7 +16,6 @@ class Product extends Model
         'description',
         'price_cents',
         'stock',
-        'image',
     ];
 
     protected static function booted(): void
@@ -32,6 +32,11 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function images(): HasMany
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('sort_order');
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';
@@ -40,5 +45,10 @@ class Product extends Model
     public function getPriceAttribute(): float
     {
         return $this->price_cents / 100;
+    }
+
+    public function getMainImageUrlAttribute(): ?string
+    {
+        return $this->images->first()?->url;
     }
 }

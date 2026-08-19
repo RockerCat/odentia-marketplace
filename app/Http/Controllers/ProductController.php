@@ -12,7 +12,7 @@ class ProductController extends Controller
     {
         $categories = Category::orderBy('name')->get();
 
-        $products = Product::with('category')
+        $products = Product::with(['category', 'images'])
             ->when($request->category, fn ($query, $slug) => $query->whereHas(
                 'category',
                 fn ($q) => $q->where('slug', $slug)
@@ -30,7 +30,7 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         return view('products.show', [
-            'product' => $product->load('category'),
+            'product' => $product->load('category', 'images'),
         ]);
     }
 }

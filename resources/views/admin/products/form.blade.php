@@ -9,7 +9,7 @@
         {{ $product->exists ? 'Editar producto' : 'Nuevo producto' }}
     </h1>
 
-    <form method="POST"
+    <form method="POST" enctype="multipart/form-data"
           action="{{ $product->exists ? route('admin.products.update', $product) : route('admin.products.store') }}"
           class="bg-white rounded-xl border border-slate-200 p-6 max-w-xl space-y-4">
         @csrf
@@ -54,8 +54,42 @@
             </div>
         </div>
 
+        <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">
+                {{ $product->exists && $product->images->isNotEmpty() ? 'Agregar más imágenes' : 'Imágenes' }}
+            </label>
+            <input type="file" name="images[]" multiple accept="image/*" class="w-full text-sm">
+            <p class="text-xs text-slate-400 mt-1">Puedes seleccionar una o varias imágenes (JPG, PNG — máx. 4MB c/u).</p>
+            @error('images') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+            @error('images.*') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+        </div>
+
         <button type="submit" class="bg-teal-700 text-white px-5 py-2.5 rounded-md font-medium hover:bg-teal-800">
             {{ $product->exists ? 'Guardar cambios' : 'Crear producto' }}
         </button>
     </form>
+
+    @if ($product->exists && $product->images->isNotEmpty())
+        <div class="max-w-xl mt-6">
+            <h2 class="text-sm font-medium text-slate-700 mb-3">Imágenes actuales</h2>
+            <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                @foreach ($product->images as $image)
+                    <div class="relative group">
+                        <img src="{{ $image->url }}" alt="{{ $product->name }}"
+                             class="w-full aspect-square object-cover rounded-lg border border-slate-200">
+                        <form method="POST" action="{{ route('admin.products.images.destroy', [$product, $image]) }}"
+                              onsubmit="return confirm('¿Eliminar esta imagen?');"
+                              class="absolute top-1 right-1">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                    class="bg-white/90 text-red-600 text-xs rounded-full w-6 h-6 flex items-center justify-center shadow hover:bg-white">
+                                &times;
+                            </button>
+                        </form>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
 @endsection

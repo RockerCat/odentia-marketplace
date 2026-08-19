@@ -15,6 +15,7 @@
         <table class="w-full text-sm">
             <thead class="bg-slate-50 text-slate-500 text-left">
                 <tr>
+                    <th class="px-5 py-3"></th>
                     <th class="px-5 py-3">Nombre</th>
                     <th class="px-5 py-3">Categoría</th>
                     <th class="px-5 py-3">Precio</th>
@@ -25,6 +26,15 @@
             <tbody class="divide-y divide-slate-100">
                 @forelse ($products as $product)
                     <tr class="hover:bg-slate-50">
+                        <td class="px-5 py-3">
+                            <div class="w-10 h-10 rounded-md bg-slate-100 overflow-hidden flex items-center justify-center">
+                                @if ($product->main_image_url)
+                                    <img src="{{ $product->main_image_url }}" alt="" class="w-full h-full object-cover">
+                                @else
+                                    <span class="text-slate-300 text-xs">—</span>
+                                @endif
+                            </div>
+                        </td>
                         <td class="px-5 py-3 font-medium text-slate-900">{{ $product->name }}</td>
                         <td class="px-5 py-3 text-slate-500">{{ $product->category->name }}</td>
                         <td class="px-5 py-3">${{ number_format($product->price, 2) }}</td>
@@ -41,7 +51,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td class="px-5 py-6 text-slate-400" colspan="5">No hay productos todavía.</td>
+                        <td class="px-5 py-6 text-slate-400" colspan="6">No hay productos todavía.</td>
                     </tr>
                 @endforelse
             </tbody>

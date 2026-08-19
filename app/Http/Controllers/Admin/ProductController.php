@@ -5,14 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
     public function index()
     {
         return view('admin.products.index', [
-            'products' => Product::with('category')->orderBy('name')->get(),
+            'products' => Product::with(['category', 'images'])->orderBy('name')->get(),
         ]);
     }
 
@@ -28,7 +30,9 @@ class ProductController extends Controller
     {
         $data = $this->validated($request);
 
-        Product::create($data);
+        $product = Product::create($data);
+
+        $this->storeImages($request, $product);
 
         return redirect()->route('admin.products.index')->with('success', 'Producto creado.');
     }
@@ -36,7 +40,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         return view('admin.products.form', [
-            'product' => $product,
+            'product' => $product->load('images'),
             'categories' => Category::orderBy('name')->get(),
         ]);
     }
@@ -47,14 +51,30 @@ class ProductController extends Controller
 
         $product->update($data);
 
+        $this->storeImages($request, $product);
+
         return redirect()->route('admin.products.index')->with('success', 'Producto actualizado.');
     }
 
     public function destroy(Product $product)
     {
+        foreach ($product->images as $image) {
+            Storage::disk('public')->delete($image->path);
+        }
+
         $product->delete();
 
         return back()->with('success', 'Producto eliminado.');
+    }
+
+    public function destroyImage(Product $product, ProductImage $image)
+    {
+        abort_unless($image->product_id === $product->id, 404);
+
+        Storage::disk('public')->delete($image->path);
+        $image->delete();
+
+        return back()->with('success', 'Imagen eliminada.');
     }
 
     protected function validated(Request $request): array
@@ -65,11 +85,31 @@ class ProductController extends Controller
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'stock' => ['required', 'integer', 'min:0'],
+            'images' => ['nullable', 'array'],
+            'images.*' => ['image', 'max:4096'],
         ]);
 
         $data['price_cents'] = (int) round($data['price'] * 100);
-        unset($data['price']);
+        unset($data['price'], $data['images']);
 
         return $data;
+    }
+
+    protected function storeImages(Request $request, Product $product): void
+    {
+        if (! $request->hasFile('images')) {
+            return;
+        }
+
+        $nextOrder = $product->images()->max('sort_order') + 1;
+
+        foreach ($request->file('images') as $file) {
+            $path = $file->store('products', 'public');
+
+            $product->images()->create([
+                'path' => $path,
+                'sort_order' => $nextOrder++,
+            ]);
+        }
     }
 }
