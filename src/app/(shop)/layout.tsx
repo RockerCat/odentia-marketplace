@@ -8,8 +8,9 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
     <>
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-teal-700">
-            Odentia
+          <Link href="/" className="flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-teal-700">Odentia</span>
+            <span className="text-sm text-slate-400">× Lopadent</span>
           </Link>
           <nav className="flex items-center gap-6 text-sm font-medium">
             <Link href="/" className="hover:text-teal-700">
