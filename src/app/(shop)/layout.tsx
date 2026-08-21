@@ -11,7 +11,7 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <Image
-              src="/branding/odentia.jpeg"
+              src="/branding/odentia.png"
               alt="Odentia"
               width={124}
               height={37}
