@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getCartCount } from "@/lib/cart";
 
 export default async function ShopLayout({ children }: LayoutProps<"/">) {
@@ -8,9 +9,23 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
     <>
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-teal-700">Odentia</span>
-            <span className="text-sm text-slate-400">× Lopadent</span>
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/branding/odentia.jpeg"
+              alt="Odentia"
+              width={124}
+              height={37}
+              priority
+              className="h-8 w-auto"
+            />
+            <span className="h-6 w-px bg-slate-200" />
+            <Image
+              src="/branding/lopadent.png"
+              alt="Lopadent"
+              width={103}
+              height={24}
+              className="h-5 w-auto"
+            />
           </Link>
           <nav className="flex items-center gap-6 text-sm font-medium">
             <Link href="/" className="hover:text-teal-700">
