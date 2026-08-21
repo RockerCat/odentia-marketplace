@@ -8,27 +8,27 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
   return (
     <>
       <header className="bg-white border-b border-slate-200">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
+        <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-3">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Image
               src="/branding/odentia.png"
               alt="Odentia"
               width={124}
               height={37}
               priority
-              className="h-8 w-auto"
+              className="h-6 sm:h-8 w-auto shrink-0"
             />
-            <span className="h-6 w-px bg-slate-200" />
+            <span className="h-5 sm:h-6 w-px bg-slate-200 shrink-0" />
             <Image
               src="/branding/lopadent.png"
               alt="Lopadent"
               width={103}
               height={24}
-              className="h-5 w-auto"
+              className="h-4 sm:h-5 w-auto shrink-0"
             />
           </Link>
-          <nav className="flex items-center gap-6 text-sm font-medium">
-            <Link href="/" className="hover:text-teal-700">
+          <nav className="flex items-center gap-3 sm:gap-6 text-sm font-medium shrink-0">
+            <Link href="/" className="hidden sm:inline hover:text-teal-700">
               Catálogo
             </Link>
             <Link href="/carrito" className="hover:text-teal-700">
