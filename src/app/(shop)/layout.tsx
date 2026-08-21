@@ -9,24 +9,32 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
     <>
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-3">
-          <Link href="/" className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <Image
-              src="/branding/odentia.png"
-              alt="Odentia"
-              width={124}
-              height={37}
-              priority
-              className="h-6 sm:h-8 w-auto shrink-0"
-            />
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <a
+              href="https://odentia-core.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                src="/branding/odentia.png"
+                alt="Odentia"
+                width={124}
+                height={37}
+                priority
+                className="h-6 sm:h-8 w-auto shrink-0"
+              />
+            </a>
             <span className="h-5 sm:h-6 w-px bg-slate-200 shrink-0" />
-            <Image
-              src="/branding/lopadent.png"
-              alt="Lopadent"
-              width={103}
-              height={24}
-              className="h-4 sm:h-5 w-auto shrink-0"
-            />
-          </Link>
+            <Link href="/">
+              <Image
+                src="/branding/lopadent.png"
+                alt="Lopadent"
+                width={103}
+                height={24}
+                className="h-4 sm:h-5 w-auto shrink-0"
+              />
+            </Link>
+          </div>
           <nav className="flex items-center gap-3 sm:gap-6 text-sm font-medium shrink-0">
             <Link href="/" className="hidden sm:inline hover:text-teal-700">
               Catálogo
