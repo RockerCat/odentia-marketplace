@@ -113,6 +113,55 @@ export async function addProductImageAction(formData: FormData) {
   redirect(`/admin/productos/${productId}/editar?success=Imagen agregada.`);
 }
 
+async function uniqueSlug(name: string): Promise<string> {
+  const base = slugify(name);
+  let candidate = base;
+  let attempt = 1;
+
+  while (await prisma.product.findUnique({ where: { slug: candidate } })) {
+    attempt += 1;
+    candidate = `${base}-${attempt}`;
+  }
+
+  return candidate;
+}
+
+export type ImportRow = {
+  name: string;
+  price: number;
+  stock: number;
+  categoryId: string;
+};
+
+export async function createProductsFromImportAction(rows: ImportRow[]) {
+  await verifySession();
+
+  let created = 0;
+
+  for (const row of rows) {
+    const name = row.name.trim();
+    if (!name || !row.categoryId) continue;
+    if (!Number.isFinite(row.price) || row.price < 0) continue;
+    if (!Number.isFinite(row.stock) || row.stock < 0) continue;
+
+    const category = await prisma.category.findUnique({ where: { id: row.categoryId } });
+    if (!category) continue;
+
+    await prisma.product.create({
+      data: {
+        categoryId: row.categoryId,
+        name,
+        slug: await uniqueSlug(name),
+        priceCents: Math.round(row.price * 100),
+        stock: Math.round(row.stock),
+      },
+    });
+    created += 1;
+  }
+
+  return { created };
+}
+
 export async function deleteProductImageAction(formData: FormData) {
   await verifySession();
 

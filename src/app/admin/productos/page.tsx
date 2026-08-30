@@ -26,12 +26,20 @@ export default async function AdminProductsPage({
 
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-slate-900">Productos</h1>
-        <Link
-          href="/admin/productos/nuevo"
-          className="bg-teal-700 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-teal-800"
-        >
-          + Nuevo producto
-        </Link>
+        <div className="flex gap-3">
+          <Link
+            href="/admin/productos/importar"
+            className="bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-slate-50"
+          >
+            Importar desde PDF
+          </Link>
+          <Link
+            href="/admin/productos/nuevo"
+            className="bg-teal-700 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-teal-800"
+          >
+            + Nuevo producto
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
