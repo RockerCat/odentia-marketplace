@@ -48,7 +48,7 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
         (r: { name: string; price: number; stock: number | null }, i: number) => ({
           id: `parsed-${i}`,
           name: r.name,
-          price: r.price.toFixed(2),
+          price: String(Math.round(r.price)),
           stock: r.stock !== null ? String(r.stock) : "",
           categoryId: defaultCategoryId,
           include: true,
@@ -152,7 +152,7 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
                   <th className="px-3 py-2"></th>
                   <th className="px-3 py-2">Nombre</th>
                   <th className="px-3 py-2">Categoría</th>
-                  <th className="px-3 py-2">Precio (USD)</th>
+                  <th className="px-3 py-2">Precio (COP)</th>
                   <th className="px-3 py-2">Stock</th>
                   <th className="px-3 py-2"></th>
                 </tr>
@@ -191,11 +191,11 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
                     <td className="px-3 py-2">
                       <input
                         type="number"
-                        step="0.01"
+                        step="1"
                         min="0"
                         value={row.price}
                         onChange={(e) => updateRow(row.id, { price: e.target.value })}
-                        className="w-24 rounded-md border-slate-300 text-sm"
+                        className="w-28 rounded-md border-slate-300 text-sm"
                       />
                     </td>
                     <td className="px-3 py-2">

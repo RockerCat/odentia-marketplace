@@ -52,12 +52,13 @@ export default async function NewProductPage({
 
         <div className="flex gap-4">
           <div className="flex-1">
-            <label className="block text-sm font-medium text-slate-700 mb-1">Precio (USD)</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Precio (COP)</label>
             <input
               type="number"
-              step="0.01"
+              step="1"
               min="0"
               name="price"
+              placeholder="Ej. 45000"
               className="w-full rounded-md border-slate-300"
             />
             {typeof errors.price === "string" && (

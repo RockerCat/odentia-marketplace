@@ -1,5 +1,11 @@
+const copFormatter = new Intl.NumberFormat("es-CO", {
+  style: "currency",
+  currency: "COP",
+  maximumFractionDigits: 0,
+});
+
 export function formatPrice(cents: number) {
-  return `$${(cents / 100).toFixed(2)}`;
+  return copFormatter.format(cents / 100);
 }
 
 export function slugify(text: string) {
