@@ -7,13 +7,24 @@ import { getProductImageUrl } from "@/lib/supabase";
 export default async function CatalogPage({
   searchParams,
 }: PageProps<"/">) {
-  const { category } = await searchParams;
+  const { category, q } = await searchParams;
   const activeCategory = typeof category === "string" ? category : undefined;
+  const query = typeof q === "string" ? q.trim() : "";
 
   const [categories, products] = await Promise.all([
     prisma.category.findMany({ orderBy: { name: "asc" } }),
     prisma.product.findMany({
-      where: activeCategory ? { category: { slug: activeCategory } } : {},
+      where: {
+        ...(activeCategory ? { category: { slug: activeCategory } } : {}),
+        ...(query
+          ? {
+              OR: [
+                { name: { contains: query, mode: "insensitive" } },
+                { description: { contains: query, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+      },
       include: {
         category: true,
         images: { orderBy: { sortOrder: "asc" }, take: 1 },
@@ -24,7 +35,7 @@ export default async function CatalogPage({
 
   return (
     <div>
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-3xl font-bold text-slate-900">
           Implementos odontológicos
         </h1>
@@ -32,6 +43,33 @@ export default async function CatalogPage({
           Todo lo que tu consultorio necesita, en un solo lugar.
         </p>
       </div>
+
+      <form method="GET" action="/" className="mb-8 flex gap-2">
+        {activeCategory && (
+          <input type="hidden" name="category" value={activeCategory} />
+        )}
+        <input
+          type="search"
+          name="q"
+          defaultValue={query}
+          placeholder="Buscar productos…"
+          className="flex-1 rounded-md border-slate-300 max-w-md"
+        />
+        <button
+          type="submit"
+          className="bg-teal-700 text-white px-5 py-2 rounded-md text-sm font-medium hover:bg-teal-800"
+        >
+          Buscar
+        </button>
+        {query && (
+          <Link
+            href={activeCategory ? `/?category=${activeCategory}` : "/"}
+            className="text-sm text-slate-400 hover:text-teal-700 self-center"
+          >
+            Limpiar
+          </Link>
+        )}
+      </form>
 
       <div className="flex flex-col md:flex-row gap-6 md:gap-8">
         <aside className="md:w-48 md:shrink-0">
@@ -41,7 +79,7 @@ export default async function CatalogPage({
           <ul className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 md:mx-0 md:px-0 md:pb-0 md:flex-col md:gap-1 md:overflow-visible text-sm">
             <li className="shrink-0">
               <Link
-                href="/"
+                href={query ? `/?q=${encodeURIComponent(query)}` : "/"}
                 className={`block px-3 py-2 rounded-full md:rounded-md whitespace-nowrap ${
                   !activeCategory
                     ? "bg-teal-700 text-white"
@@ -54,7 +92,7 @@ export default async function CatalogPage({
             {categories.map((cat) => (
               <li key={cat.id} className="shrink-0">
                 <Link
-                  href={`/?category=${cat.slug}`}
+                  href={`/?category=${cat.slug}${query ? `&q=${encodeURIComponent(query)}` : ""}`}
                   className={`block px-3 py-2 rounded-full md:rounded-md whitespace-nowrap ${
                     activeCategory === cat.slug
                       ? "bg-teal-700 text-white"
@@ -71,7 +109,9 @@ export default async function CatalogPage({
         <div className="flex-1 min-w-0 grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {products.length === 0 && (
             <p className="text-slate-500 col-span-full">
-              No hay productos en esta categoría.
+              {query
+                ? `No encontramos productos para "${query}".`
+                : "No hay productos en esta categoría."}
             </p>
           )}
 
