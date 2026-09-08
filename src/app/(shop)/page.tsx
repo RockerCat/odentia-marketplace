@@ -3,6 +3,7 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/format";
 import { getProductImageUrl } from "@/lib/supabase";
+import SearchBar from "./search-bar";
 
 export default async function CatalogPage({
   searchParams,
@@ -44,32 +45,7 @@ export default async function CatalogPage({
         </p>
       </div>
 
-      <form method="GET" action="/" className="mb-8 flex gap-2">
-        {activeCategory && (
-          <input type="hidden" name="category" value={activeCategory} />
-        )}
-        <input
-          type="search"
-          name="q"
-          defaultValue={query}
-          placeholder="Buscar productos…"
-          className="flex-1 rounded-md border-slate-300 max-w-md"
-        />
-        <button
-          type="submit"
-          className="bg-teal-700 text-white px-5 py-2 rounded-md text-sm font-medium hover:bg-teal-800"
-        >
-          Buscar
-        </button>
-        {query && (
-          <Link
-            href={activeCategory ? `/?category=${activeCategory}` : "/"}
-            className="text-sm text-slate-400 hover:text-teal-700 self-center"
-          >
-            Limpiar
-          </Link>
-        )}
-      </form>
+      <SearchBar initialQuery={query} category={activeCategory} />
 
       <div className="flex flex-col md:flex-row gap-6 md:gap-8">
         <aside className="md:w-48 md:shrink-0">
