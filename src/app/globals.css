@@ -4,3 +4,9 @@ body {
   background: #f8fafc;
   color: #1e293b;
 }
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+select {
+  padding-left: 10px;
+  padding-right: 10px;
+}
