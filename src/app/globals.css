@@ -6,7 +6,11 @@ body {
 }
 
 input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
-select {
+select,
+textarea {
   padding-left: 10px;
   padding-right: 10px;
+  background-color: #fff;
+  border-width: 1px;
+  border-style: solid;
 }
