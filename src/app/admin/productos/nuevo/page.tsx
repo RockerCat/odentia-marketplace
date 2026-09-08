@@ -81,7 +81,7 @@ export default async function NewProductPage({
           <input
             type="text"
             name="options"
-            placeholder="Ej. Copa, Disco, Punta"
+            placeholder="Ninguno"
             className="w-full rounded-md border-slate-300"
           />
           <p className="text-xs text-slate-400 mt-1">

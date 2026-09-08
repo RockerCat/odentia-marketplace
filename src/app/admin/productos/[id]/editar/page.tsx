@@ -125,7 +125,7 @@ export default async function EditProductPage({
             type="text"
             name="options"
             defaultValue={product.options.map((o) => o.label).join(", ")}
-            placeholder="Ej. Copa, Disco, Punta"
+            placeholder="Ninguno"
             className="w-full rounded-md border-slate-300"
           />
           <p className="text-xs text-slate-400 mt-1">

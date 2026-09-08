@@ -230,7 +230,7 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
                         type="text"
                         value={row.options}
                         onChange={(e) => updateRow(row.id, { options: e.target.value })}
-                        placeholder="Copa, Disco, Punta"
+                        placeholder="Ninguno"
                         className="w-40 rounded-md border-slate-300 text-sm"
                       />
                     </td>
