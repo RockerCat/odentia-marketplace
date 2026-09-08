@@ -6,6 +6,19 @@ import { verifySession } from "@/lib/dal";
 import { slugify } from "@/lib/format";
 import { uploadProductImage, deleteProductImage } from "@/lib/supabase";
 
+function parseOptions(raw: string): string[] {
+  return [...new Set(raw.split(",").map((s) => s.trim()).filter(Boolean))];
+}
+
+async function syncProductOptions(productId: string, labels: string[]) {
+  await prisma.productOption.deleteMany({ where: { productId } });
+  if (labels.length === 0) return;
+
+  await prisma.productOption.createMany({
+    data: labels.map((label, i) => ({ productId, label, sortOrder: i })),
+  });
+}
+
 function parseProductFields(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const categoryId = String(formData.get("categoryId") ?? "");
@@ -44,6 +57,8 @@ export async function createProductAction(formData: FormData) {
     data: { ...data, slug: slugify(data.name) },
   });
 
+  await syncProductOptions(product.id, parseOptions(String(formData.get("options") ?? "")));
+
   const files = formData.getAll("images").filter((f): f is File => f instanceof File && f.size > 0);
   let sortOrder = 0;
   for (const file of files) {
@@ -70,6 +85,8 @@ export async function updateProductAction(formData: FormData) {
     where: { id },
     data: { ...data, slug: slugify(data.name) },
   });
+
+  await syncProductOptions(id, parseOptions(String(formData.get("options") ?? "")));
 
   redirect("/admin/productos?success=Producto actualizado.");
 }
@@ -131,6 +148,7 @@ export type ImportRow = {
   price: number;
   stock: number;
   categoryId: string;
+  options?: string[];
 };
 
 export async function createProductsFromImportAction(rows: ImportRow[]) {
@@ -147,7 +165,7 @@ export async function createProductsFromImportAction(rows: ImportRow[]) {
     const category = await prisma.category.findUnique({ where: { id: row.categoryId } });
     if (!category) continue;
 
-    await prisma.product.create({
+    const product = await prisma.product.create({
       data: {
         categoryId: row.categoryId,
         name,
@@ -156,6 +174,14 @@ export async function createProductsFromImportAction(rows: ImportRow[]) {
         stock: Math.round(row.stock),
       },
     });
+
+    const options = [...new Set((row.options ?? []).map((o) => o.trim()).filter(Boolean))];
+    if (options.length > 0) {
+      await prisma.productOption.createMany({
+        data: options.map((label, i) => ({ productId: product.id, label, sortOrder: i })),
+      });
+    }
+
     created += 1;
   }
 

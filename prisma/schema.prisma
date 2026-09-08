@@ -34,6 +34,7 @@ model Product {
   stock       Int            @default(0)
   createdAt   DateTime       @default(now())
   images      ProductImage[]
+  options     ProductOption[]
   orderItems  OrderItem[]
 }
 
@@ -42,6 +43,17 @@ model ProductImage {
   productId String
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   path      String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+// A simple selectable variant (e.g. "Copa", "Disco", "Punta") that shares the
+// product's price and stock — not an independent SKU with its own pricing.
+model ProductOption {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  label     String
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
 }
@@ -66,6 +78,7 @@ model OrderItem {
   productId     String?
   product       Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
   productName   String
+  optionLabel   String?
   unitPriceCents Int
   quantity      Int
   subtotalCents Int

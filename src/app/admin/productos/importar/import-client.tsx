@@ -11,6 +11,7 @@ type Row = {
   price: string;
   stock: string;
   categoryId: string;
+  options: string;
   include: boolean;
 };
 
@@ -51,6 +52,7 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
             price: number;
             stock: number | null;
             suggestedCategoryId: string | null;
+            options: string[];
           },
           i: number
         ) => ({
@@ -59,6 +61,7 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
           price: String(Math.round(r.price)),
           stock: r.stock !== null ? String(r.stock) : "",
           categoryId: r.suggestedCategoryId ?? defaultCategoryId,
+          options: r.options.join(", "),
           include: true,
         })
       );
@@ -91,6 +94,7 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
         price: "",
         stock: "",
         categoryId: defaultCategoryId,
+        options: "",
         include: true,
       },
     ]);
@@ -118,6 +122,10 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
           price: Number(row.price),
           stock: Number(row.stock),
           categoryId: row.categoryId,
+          options: row.options
+            .split(",")
+            .map((o) => o.trim())
+            .filter(Boolean),
         }))
       );
 
@@ -162,6 +170,7 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
                   <th className="px-3 py-2">Categoría</th>
                   <th className="px-3 py-2">Precio (COP)</th>
                   <th className="px-3 py-2">Stock</th>
+                  <th className="px-3 py-2">Opciones</th>
                   <th className="px-3 py-2"></th>
                 </tr>
               </thead>
@@ -217,6 +226,15 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
                       />
                     </td>
                     <td className="px-3 py-2">
+                      <input
+                        type="text"
+                        value={row.options}
+                        onChange={(e) => updateRow(row.id, { options: e.target.value })}
+                        placeholder="Copa, Disco, Punta"
+                        className="w-40 rounded-md border-slate-300 text-sm"
+                      />
+                    </td>
+                    <td className="px-3 py-2">
                       <button
                         type="button"
                         onClick={() => removeRow(row.id)}
@@ -229,7 +247,7 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
                 ))}
                 {rows.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-3 py-6 text-center text-slate-400">
+                    <td colSpan={7} className="px-3 py-6 text-center text-slate-400">
                       Sin filas todavía.
                     </td>
                   </tr>

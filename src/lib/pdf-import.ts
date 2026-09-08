@@ -3,6 +3,7 @@ export type ParsedProductLine = {
   price: number;
   stock: number | null;
   suggestedCategoryId: string | null;
+  options: string[];
 };
 
 export type CategoryLookup = { id: string; name: string };
@@ -49,6 +50,21 @@ function cleanName(text: string): string {
     .replace(/\s{2,}/g, " ")
     .replace(/[-:|.\s]+$/, "")
     .trim();
+}
+
+// Order forms often mark selectable variants as checkbox blanks right in the
+// product line, e.g. "Jiffy HiShine diamantada azul __Copa __Disco __Punta".
+// Pulls those "__Token" markers out as options and returns the cleaned name.
+function extractOptions(text: string): { name: string; options: string[] } {
+  const options: string[] = [];
+
+  const stripped = text.replace(/__(\S+)/g, (_match, token: string) => {
+    const label = token.replace(/[,:;]+$/, "");
+    if (label) options.push(label);
+    return " ";
+  });
+
+  return { name: cleanName(stripped), options: [...new Set(options)] };
 }
 
 function isSubstantialName(text: string): boolean {
@@ -162,12 +178,13 @@ export function parseProductLines(
     // If this line carries its own name, use it. Otherwise (a price sitting
     // alone on its own line) fall back to whatever plain-text lines came
     // right before it.
-    const name = isSubstantialName(ownName) ? ownName : cleanName(nameBuffer.join(" "));
+    const rawName = isSubstantialName(ownName) ? ownName : cleanName(nameBuffer.join(" "));
     nameBuffer = [];
 
+    const { name, options } = extractOptions(rawName);
     if (!isSubstantialName(name)) continue;
 
-    results.push({ name, price, stock: null, suggestedCategoryId: currentCategoryId });
+    results.push({ name, price, stock: null, suggestedCategoryId: currentCategoryId, options });
   }
 
   return results;

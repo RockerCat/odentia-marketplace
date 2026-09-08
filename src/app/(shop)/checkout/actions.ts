@@ -56,6 +56,7 @@ export async function placeOrderAction(
           create: items.map((item) => ({
             productId: item.product.id,
             productName: item.product.name,
+            optionLabel: item.option,
             unitPriceCents: item.product.priceCents,
             quantity: item.quantity,
             subtotalCents: item.subtotalCents,

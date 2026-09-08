@@ -37,7 +37,8 @@ export default async function OrderConfirmationPage({
         {order.items.map((item) => (
           <li key={item.id} className="flex justify-between">
             <span className="text-slate-600">
-              {item.productName} &times; {item.quantity}
+              {item.productName}
+              {item.optionLabel && ` (${item.optionLabel})`} &times; {item.quantity}
             </span>
             <span className="font-medium text-slate-900">
               {formatPrice(item.subtotalCents)}

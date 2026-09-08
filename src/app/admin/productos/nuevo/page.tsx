@@ -75,6 +75,22 @@ export default async function NewProductPage({
         </div>
 
         <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            Opciones (opcional)
+          </label>
+          <input
+            type="text"
+            name="options"
+            placeholder="Ej. Copa, Disco, Punta"
+            className="w-full rounded-md border-slate-300"
+          />
+          <p className="text-xs text-slate-400 mt-1">
+            Separadas por coma. El cliente elige una al agregar al carrito; el precio y el stock
+            son los mismos para todas.
+          </p>
+        </div>
+
+        <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Imágenes</label>
           <input type="file" name="images" multiple accept="image/*" className={FILE_INPUT_CLASS} />
           <p className="text-xs text-slate-400 mt-1">

@@ -16,6 +16,7 @@ export default async function ProductPage({
     include: {
       category: true,
       images: { orderBy: { sortOrder: "asc" } },
+      options: { orderBy: { sortOrder: "asc" } },
     },
   });
 
@@ -41,8 +42,8 @@ export default async function ProductPage({
           </h1>
           <p className="text-slate-600 mb-6">{product.description}</p>
 
-          <div className="flex items-end justify-between border-t border-slate-100 pt-6">
-            <div>
+          <div className="border-t border-slate-100 pt-6">
+            <div className="mb-4">
               <p className="text-3xl font-bold text-slate-900">
                 {formatPrice(product.priceCents)}
               </p>
@@ -52,16 +53,42 @@ export default async function ProductPage({
             </div>
 
             {product.stock > 0 ? (
-              <form action={addToCartAction} className="flex items-center gap-3">
+              <form action={addToCartAction} className="flex flex-wrap items-end gap-3">
                 <input type="hidden" name="productId" value={product.id} />
-                <input
-                  type="number"
-                  name="quantity"
-                  defaultValue={1}
-                  min={1}
-                  max={product.stock}
-                  className="w-20 rounded-md border-slate-300 text-center"
-                />
+
+                {product.options.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                      Opción
+                    </label>
+                    <select
+                      name="option"
+                      required
+                      className="rounded-md border-slate-300"
+                    >
+                      {product.options.map((opt) => (
+                        <option key={opt.id} value={opt.label}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Cantidad
+                  </label>
+                  <input
+                    type="number"
+                    name="quantity"
+                    defaultValue={1}
+                    min={1}
+                    max={product.stock}
+                    className="w-20 rounded-md border-slate-300 text-center"
+                  />
+                </div>
+
                 <button
                   type="submit"
                   className="bg-teal-700 text-white px-5 py-2.5 rounded-md font-medium hover:bg-teal-800"

@@ -24,7 +24,7 @@ export default async function CartPage() {
           <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100">
             {items.map((item) => (
               <div
-                key={item.product.id}
+                key={item.key}
                 className="flex items-center justify-between p-5 gap-4"
               >
                 <div className="flex-1">
@@ -34,13 +34,16 @@ export default async function CartPage() {
                   >
                     {item.product.name}
                   </Link>
+                  {item.option && (
+                    <p className="text-sm text-teal-700">Opción: {item.option}</p>
+                  )}
                   <p className="text-sm text-slate-400">
                     {formatPrice(item.product.priceCents)} c/u
                   </p>
                 </div>
 
                 <form action={updateCartItemAction} className="flex items-center gap-2">
-                  <input type="hidden" name="productId" value={item.product.id} />
+                  <input type="hidden" name="key" value={item.key} />
                   <input
                     type="number"
                     name="quantity"
@@ -59,7 +62,7 @@ export default async function CartPage() {
                 </p>
 
                 <form action={removeFromCartAction}>
-                  <input type="hidden" name="productId" value={item.product.id} />
+                  <input type="hidden" name="key" value={item.key} />
                   <button type="submit" className="text-sm text-red-500 hover:underline">
                     Quitar
                   </button>

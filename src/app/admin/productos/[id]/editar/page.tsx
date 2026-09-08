@@ -18,7 +18,10 @@ export default async function EditProductPage({
   const [product, categories] = await Promise.all([
     prisma.product.findUnique({
       where: { id },
-      include: { images: { orderBy: { sortOrder: "asc" } } },
+      include: {
+        images: { orderBy: { sortOrder: "asc" } },
+        options: { orderBy: { sortOrder: "asc" } },
+      },
     }),
     prisma.category.findMany({ orderBy: { name: "asc" } }),
   ]);
@@ -112,6 +115,23 @@ export default async function EditProductPage({
               <p className="text-sm text-red-600 mt-1">{errors.stock}</p>
             )}
           </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            Opciones (opcional)
+          </label>
+          <input
+            type="text"
+            name="options"
+            defaultValue={product.options.map((o) => o.label).join(", ")}
+            placeholder="Ej. Copa, Disco, Punta"
+            className="w-full rounded-md border-slate-300"
+          />
+          <p className="text-xs text-slate-400 mt-1">
+            Separadas por coma. El cliente elige una al agregar al carrito; el precio y el stock
+            son los mismos para todas.
+          </p>
         </div>
 
         <button

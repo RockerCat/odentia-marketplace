@@ -87,7 +87,12 @@ export default async function AdminOrderDetailPage({
             <tbody className="divide-y divide-slate-100">
               {order.items.map((item) => (
                 <tr key={item.id}>
-                  <td className="py-2">{item.productName}</td>
+                  <td className="py-2">
+                    {item.productName}
+                    {item.optionLabel && (
+                      <span className="text-slate-400"> ({item.optionLabel})</span>
+                    )}
+                  </td>
                   <td className="py-2">{item.quantity}</td>
                   <td className="py-2 text-right">
                     {formatPrice(item.subtotalCents)}
