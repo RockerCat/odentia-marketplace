@@ -95,7 +95,7 @@ export default async function EditProductPage({
               step="1"
               min="0"
               name="price"
-              defaultValue={Math.round(product.priceCents / 100)}
+              defaultValue={product.priceCents}
               className="w-full rounded-md border-slate-300"
             />
             {typeof errors.price === "string" && (

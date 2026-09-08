@@ -4,8 +4,11 @@ const copFormatter = new Intl.NumberFormat("es-CO", {
   maximumFractionDigits: 0,
 });
 
-export function formatPrice(cents: number) {
-  return copFormatter.format(cents / 100);
+// COP has no meaningful sub-unit in everyday use, so amounts are stored and
+// formatted as whole pesos (the "*Cents" field names are a historical
+// leftover from when the store used USD).
+export function formatPrice(amount: number) {
+  return copFormatter.format(amount);
 }
 
 export function slugify(text: string) {

@@ -62,7 +62,7 @@ async function main() {
           name: product.name,
           slug: slugify(product.name),
           description: `Implemento odontológico de la categoría ${categoryName}.`,
-          priceCents: Math.round(product.price * 100),
+          priceCents: Math.round(product.price),
           stock: product.stock,
         },
       });

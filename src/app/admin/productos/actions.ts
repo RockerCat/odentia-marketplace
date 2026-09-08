@@ -38,7 +38,7 @@ function parseProductFields(formData: FormData) {
       name,
       categoryId,
       description: description || null,
-      priceCents: Math.round(price * 100),
+      priceCents: Math.round(price),
       stock,
     },
   };
@@ -170,7 +170,7 @@ export async function createProductsFromImportAction(rows: ImportRow[]) {
         categoryId: row.categoryId,
         name,
         slug: await uniqueSlug(name),
-        priceCents: Math.round(row.price * 100),
+        priceCents: Math.round(row.price),
         stock: Math.round(row.stock),
       },
     });
