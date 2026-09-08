@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { PDFParse } from "pdf-parse";
 import { getSession } from "@/lib/session";
 import { parseProductLines } from "@/lib/pdf-import";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   const session = await getSession();
@@ -21,7 +22,8 @@ export async function POST(request: Request) {
 
   try {
     const { text } = await parser.getText();
-    const rows = parseProductLines(text);
+    const categories = await prisma.category.findMany({ select: { id: true, name: true } });
+    const rows = parseProductLines(text, categories);
 
     return NextResponse.json({ rows });
   } catch (err) {

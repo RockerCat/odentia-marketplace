@@ -45,12 +45,20 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
       }
 
       const parsedRows: Row[] = data.rows.map(
-        (r: { name: string; price: number; stock: number | null }, i: number) => ({
+        (
+          r: {
+            name: string;
+            price: number;
+            stock: number | null;
+            suggestedCategoryId: string | null;
+          },
+          i: number
+        ) => ({
           id: `parsed-${i}`,
           name: r.name,
           price: String(Math.round(r.price)),
           stock: r.stock !== null ? String(r.stock) : "",
-          categoryId: defaultCategoryId,
+          categoryId: r.suggestedCategoryId ?? defaultCategoryId,
           include: true,
         })
       );
