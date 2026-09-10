@@ -36,9 +36,18 @@ export default async function CatalogPage({
 
   return (
     <div>
-      <div className="relative w-full aspect-[18/5] -mt-4 mb-3 rounded-xl overflow-hidden">
+      <div className="hidden sm:block relative w-full aspect-[18/5] -mt-4 mb-3 rounded-xl overflow-hidden">
         <Image
           src="/branding/banner-lopadent.png"
+          alt="Lopadent — Suministros odontológicos"
+          fill
+          priority
+          className="object-cover object-top"
+        />
+      </div>
+      <div className="sm:hidden relative w-full aspect-[1983/793] -mt-4 mb-3 rounded-xl overflow-hidden">
+        <Image
+          src="/branding/banner-lopadent-mobile.png"
           alt="Lopadent — Suministros odontológicos"
           fill
           priority
