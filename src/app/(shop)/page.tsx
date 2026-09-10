@@ -36,14 +36,15 @@ export default async function CatalogPage({
 
   return (
     <div>
-      <Image
-        src="/branding/banner-lopadent.png"
-        alt="Lopadent — Suministros odontológicos"
-        width={2172}
-        height={724}
-        priority
-        className="w-full h-auto rounded-xl -mt-4 mb-3"
-      />
+      <div className="relative w-full aspect-[18/5] -mt-4 mb-3 rounded-xl overflow-hidden">
+        <Image
+          src="/branding/banner-lopadent.png"
+          alt="Lopadent — Suministros odontológicos"
+          fill
+          priority
+          className="object-cover object-center"
+        />
+      </div>
 
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-slate-900">
