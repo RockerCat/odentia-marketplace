@@ -42,7 +42,7 @@ export default async function CatalogPage({
           alt="Lopadent — Suministros odontológicos"
           fill
           priority
-          className="object-cover object-center"
+          className="object-cover object-top"
         />
       </div>
 
