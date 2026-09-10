@@ -7,7 +7,7 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
 
   return (
     <>
-      <header className="bg-white border-b border-slate-200">
+      <header className="sticky top-0 z-20 bg-white border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <a href="https://odentia-core.vercel.app/agenda">
