@@ -36,6 +36,15 @@ export default async function CatalogPage({
 
   return (
     <div>
+      <Image
+        src="/branding/banner-lopadent.png"
+        alt="Lopadent — Suministros odontológicos"
+        width={2172}
+        height={724}
+        priority
+        className="w-full h-auto rounded-xl mb-6"
+      />
+
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-slate-900">
           Implementos odontológicos
