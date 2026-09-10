@@ -46,15 +46,6 @@ export default async function CatalogPage({
         />
       </div>
 
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-slate-900">
-          Implementos odontológicos
-        </h1>
-        <p className="text-slate-500 mt-1">
-          Todo lo que tu consultorio necesita, en un solo lugar.
-        </p>
-      </div>
-
       <SearchBar initialQuery={query} category={activeCategory} />
 
       <div className="flex flex-col md:flex-row gap-6 md:gap-8">
