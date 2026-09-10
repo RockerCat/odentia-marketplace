@@ -42,7 +42,7 @@ export default async function CatalogPage({
         width={2172}
         height={724}
         priority
-        className="w-full h-auto rounded-xl mb-6"
+        className="w-full h-auto rounded-xl -mt-4 mb-3"
       />
 
       <div className="mb-6">
