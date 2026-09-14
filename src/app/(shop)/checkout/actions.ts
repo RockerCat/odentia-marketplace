@@ -15,7 +15,14 @@ const CheckoutSchema = z.object({
 
 export type CheckoutState = {
   errors?: Partial<Record<keyof z.infer<typeof CheckoutSchema>, string>>;
+  formError?: string;
 } | undefined;
+
+// Thrown inside the $transaction below to force a full rollback when a
+// product's stock can't cover the requested quantity anymore — caught
+// outside the transaction and turned into a user-facing formError, never
+// leaked as a raw Prisma/Postgres error.
+class OutOfStockError extends Error {}
 
 export async function placeOrderAction(
   _prevState: CheckoutState,
@@ -46,34 +53,53 @@ export async function placeOrderAction(
 
   const totalCents = items.reduce((sum, item) => sum + item.subtotalCents, 0);
 
-  const order = await prisma.$transaction(async (tx) => {
-    const order = await tx.order.create({
-      data: {
-        ...parsed.data,
-        totalCents,
-        status: "PENDIENTE_PAGO",
-        items: {
-          create: items.map((item) => ({
-            productId: item.product.id,
-            productName: item.product.name,
-            optionLabel: item.option,
-            unitPriceCents: item.product.priceCents,
-            quantity: item.quantity,
-            subtotalCents: item.subtotalCents,
-          })),
+  let order;
+  try {
+    order = await prisma.$transaction(async (tx) => {
+      // Conditional UPDATE (stock decrement gated on stock >= quantity in
+      // the same statement) instead of a read-then-write: the row lock
+      // Postgres takes for the UPDATE makes this safe under concurrent
+      // checkouts for the same product — a `findUnique` check beforehand
+      // would not be, since another transaction could decrement the stock
+      // in between the read and the write.
+      for (const item of items) {
+        const result = await tx.product.updateMany({
+          where: { id: item.product.id, stock: { gte: item.quantity } },
+          data: { stock: { decrement: item.quantity } },
+        });
+
+        if (result.count === 0) {
+          throw new OutOfStockError();
+        }
+      }
+
+      return tx.order.create({
+        data: {
+          ...parsed.data,
+          totalCents,
+          status: "PENDIENTE_PAGO",
+          items: {
+            create: items.map((item) => ({
+              productId: item.product.id,
+              productName: item.product.name,
+              optionLabel: item.option,
+              unitPriceCents: item.product.priceCents,
+              quantity: item.quantity,
+              subtotalCents: item.subtotalCents,
+            })),
+          },
         },
-      },
-    });
-
-    for (const item of items) {
-      await tx.product.update({
-        where: { id: item.product.id },
-        data: { stock: { decrement: item.quantity } },
       });
+    });
+  } catch (err) {
+    if (err instanceof OutOfStockError) {
+      return {
+        formError:
+          "Uno o más productos ya no tienen stock suficiente. Revisa tu carrito antes de continuar.",
+      };
     }
-
-    return order;
-  });
+    throw err;
+  }
 
   await clearCart();
 

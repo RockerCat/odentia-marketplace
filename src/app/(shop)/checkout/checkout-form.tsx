@@ -8,6 +8,12 @@ export default function CheckoutForm() {
 
   return (
     <form action={action} className="flex-1 bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+      {state?.formError && (
+        <div className="rounded-md bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">
+          {state.formError}
+        </div>
+      )}
+
       <div>
         <label className="block text-sm font-medium text-slate-700 mb-1">Nombre completo</label>
         <input type="text" name="customerName" className="w-full rounded-md border-slate-300" />
