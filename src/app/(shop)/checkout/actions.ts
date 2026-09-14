@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { redirect } from "next/navigation";
+import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCartItems, clearCart } from "@/lib/cart";
 
@@ -24,10 +25,59 @@ export type CheckoutState = {
 // leaked as a raw Prisma/Postgres error.
 class OutOfStockError extends Error {}
 
+// True only for the P2002 unique-constraint violation on Order.idempotencyKey
+// — the signal that a concurrent request already created (or is
+// simultaneously creating) the Order for this exact checkout attempt. Any
+// other P2002 (or other error) must keep surfacing as a real failure, never
+// get silently treated as success.
+function isIdempotencyKeyConflict(err: unknown): boolean {
+  if (!(err instanceof Prisma.PrismaClientKnownRequestError) || err.code !== "P2002") {
+    return false;
+  }
+  const target = err.meta?.target;
+  if (Array.isArray(target)) return target.includes("idempotencyKey");
+  if (typeof target === "string") return target.includes("idempotencyKey");
+  return false;
+}
+
+async function redirectToExistingOrder(orderId: string): Promise<never> {
+  // The purchase this key represents already exists (created by an earlier
+  // request, or by whichever concurrent request won the race) — bring the
+  // caller to the exact same result a fresh success would have produced.
+  // Safe to call even if the winning request already cleared it.
+  await clearCart();
+  redirect(`/pedido/${orderId}/gracias`);
+}
+
 export async function placeOrderAction(
   _prevState: CheckoutState,
   formData: FormData
 ): Promise<CheckoutState> {
+  const idempotencyKey = String(formData.get("idempotencyKey") ?? "").trim();
+  if (!idempotencyKey) {
+    // Only reachable if the hidden field was missing/stripped — never
+    // happens through the real form, but without a key there is nothing to
+    // dedupe against.
+    return {
+      formError: "No pudimos procesar el pedido. Recarga la página e intenta de nuevo.",
+    };
+  }
+
+  // Fast path for a retry (double submit, dropped response the user
+  // resubmits): if this exact checkout attempt already produced an Order,
+  // go straight to its confirmation — before even looking at cart/stock
+  // state, since by the time a retry arrives the cart may have already been
+  // cleared by the request that succeeded. This is an optimization only;
+  // the UNIQUE constraint below is what actually guarantees correctness
+  // under real concurrency.
+  const existingOrder = await prisma.order.findUnique({
+    where: { idempotencyKey },
+    select: { id: true },
+  });
+  if (existingOrder) {
+    await redirectToExistingOrder(existingOrder.id);
+  }
+
   const items = await getCartItems();
 
   if (items.length === 0) {
@@ -76,6 +126,7 @@ export async function placeOrderAction(
       return tx.order.create({
         data: {
           ...parsed.data,
+          idempotencyKey,
           totalCents,
           status: "PENDIENTE_PAGO",
           items: {
@@ -98,6 +149,22 @@ export async function placeOrderAction(
           "Uno o más productos ya no tienen stock suficiente. Revisa tu carrito antes de continuar.",
       };
     }
+
+    // Lost the race: a concurrent request with this same idempotencyKey
+    // committed first. Our own transaction (including its stock decrements)
+    // was rolled back by Postgres when order.create() hit the UNIQUE
+    // violation, so stock was only ever decremented once, by the winner.
+    // Surface the winner's order instead of an error.
+    if (isIdempotencyKeyConflict(err)) {
+      const winner = await prisma.order.findUnique({
+        where: { idempotencyKey },
+        select: { id: true },
+      });
+      if (winner) {
+        await redirectToExistingOrder(winner.id);
+      }
+    }
+
     throw err;
   }
 

@@ -59,16 +59,24 @@ model ProductOption {
 }
 
 model Order {
-  id            String      @id @default(cuid())
-  customerName  String
-  customerEmail String
-  customerPhone String
-  address       String
-  notes         String?
-  totalCents    Int
-  status        OrderStatus @default(PENDIENTE_PAGO)
-  createdAt     DateTime    @default(now())
-  items         OrderItem[]
+  id              String      @id @default(cuid())
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  address         String
+  notes           String?
+  totalCents      Int
+  status          OrderStatus @default(PENDIENTE_PAGO)
+  createdAt       DateTime    @default(now())
+  items           OrderItem[]
+  // One idempotency key per logical checkout attempt, generated client-side
+  // before the first submit and carried through retries (see checkout-form
+  // and placeOrderAction). Nullable so historical orders stay valid; every
+  // new checkout must supply one. The UNIQUE constraint is what actually
+  // prevents a duplicate Order under a retry or a concurrent double-submit —
+  // Postgres, not application logic, is the source of truth for "already
+  // processed this attempt".
+  idempotencyKey  String?     @unique
 }
 
 model OrderItem {
