@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { verifySession } from "@/lib/dal";
 import { slugify } from "@/lib/format";
-import { uploadProductImage, deleteProductImage } from "@/lib/supabase";
+import { uploadProductImage, deleteProductImage, InvalidImageError } from "@/lib/supabase";
 
 function parseOptions(raw: string): string[] {
   return [...new Set(raw.split(",").map((s) => s.trim()).filter(Boolean))];
@@ -61,11 +61,18 @@ export async function createProductAction(formData: FormData) {
 
   const files = formData.getAll("images").filter((f): f is File => f instanceof File && f.size > 0);
   let sortOrder = 0;
-  for (const file of files) {
-    const path = await uploadProductImage(file, product.id);
-    await prisma.productImage.create({
-      data: { productId: product.id, path, sortOrder: sortOrder++ },
-    });
+  try {
+    for (const file of files) {
+      const path = await uploadProductImage(file, product.id);
+      await prisma.productImage.create({
+        data: { productId: product.id, path, sortOrder: sortOrder++ },
+      });
+    }
+  } catch (err) {
+    if (err instanceof InvalidImageError) {
+      redirect(`/admin/productos/${product.id}/editar?error=${encodeURIComponent(err.message)}`);
+    }
+    throw err;
   }
 
   redirect("/admin/productos?success=Producto creado.");
@@ -122,9 +129,16 @@ export async function addProductImageAction(formData: FormData) {
   });
   let sortOrder = (currentMax._max.sortOrder ?? -1) + 1;
 
-  for (const file of files) {
-    const path = await uploadProductImage(file, productId);
-    await prisma.productImage.create({ data: { productId, path, sortOrder: sortOrder++ } });
+  try {
+    for (const file of files) {
+      const path = await uploadProductImage(file, productId);
+      await prisma.productImage.create({ data: { productId, path, sortOrder: sortOrder++ } });
+    }
+  } catch (err) {
+    if (err instanceof InvalidImageError) {
+      redirect(`/admin/productos/${productId}/editar?error=${encodeURIComponent(err.message)}`);
+    }
+    throw err;
   }
 
   redirect(`/admin/productos/${productId}/editar?success=Imagen agregada.`);

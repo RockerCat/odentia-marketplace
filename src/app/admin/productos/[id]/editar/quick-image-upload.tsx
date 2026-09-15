@@ -21,7 +21,7 @@ export default function QuickImageUpload({ productId }: { productId: string }) {
         type="file"
         name="images"
         multiple
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp"
         className={FILE_INPUT_CLASS}
         onChange={(e) => {
           if (e.target.files && e.target.files.length > 0) {
@@ -30,7 +30,7 @@ export default function QuickImageUpload({ productId }: { productId: string }) {
         }}
       />
       <p className="text-xs text-slate-400 mt-1">
-        Se guardan automáticamente al elegirlas (JPG, PNG — máx. 4MB c/u).
+        Se guardan automáticamente al elegirlas (JPG, PNG o WebP — máx. 5MB c/u).
       </p>
     </form>
   );

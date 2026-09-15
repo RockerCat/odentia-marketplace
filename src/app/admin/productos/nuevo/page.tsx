@@ -92,9 +92,15 @@ export default async function NewProductPage({
 
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Imágenes</label>
-          <input type="file" name="images" multiple accept="image/*" className={FILE_INPUT_CLASS} />
+          <input
+            type="file"
+            name="images"
+            multiple
+            accept="image/jpeg,image/png,image/webp"
+            className={FILE_INPUT_CLASS}
+          />
           <p className="text-xs text-slate-400 mt-1">
-            Puedes seleccionar una o varias imágenes (JPG, PNG — máx. 4MB c/u).
+            Puedes seleccionar una o varias imágenes (JPG, PNG o WebP — máx. 5MB c/u).
           </p>
         </div>
 
