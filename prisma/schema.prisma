@@ -100,6 +100,30 @@ model Order {
   // check); admins still reach it through the admin order routes, which
   // don't use this token at all.
   accessTokenHash String?     @unique
+  // External Core identity, snapshotted at Order creation from the
+  // server-side odentia_customer_session at that moment (see
+  // src/lib/customer-session.ts) — never a local FK, since Core and
+  // Marketplace are separate databases/projects. NULL on both together
+  // means a guest order; non-null on both together means a Core-attributed
+  // one — there is no third state (see the CHECK constraint added in this
+  // column's own migration, order_core_attribution_pair).
+  coreUserId      String?
+  // Core's clinic id. Kept alongside coreUserId (never alone) so a future
+  // "purchases by clinic" query never needs anything beyond this table —
+  // see the (clinicId, createdAt) index below.
+  clinicId        String?
+  // The specific clinic_memberships row Core certified at the moment of
+  // this Order — finer-grained than clinicId/coreUserId alone, for
+  // audit/dispute resolution only; never queried on its own.
+  membershipId    String?
+  // Plain historical snapshot of the role Core certified at purchase time
+  // (clinic_admin/dentist/assistant) — analytics/audit only, deliberately
+  // a bare string rather than a Prisma enum: it is a fact about the past,
+  // never re-checked for authorization anywhere in this app.
+  coreRole        String?
+
+  @@index([coreUserId])
+  @@index([clinicId, createdAt])
 }
 
 model OrderItem {
