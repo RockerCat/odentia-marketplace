@@ -125,7 +125,7 @@ export default async function EditProductPage({
         </div>
 
         <PriceCalculator
-          defaultCostPriceCents={product.costPriceCents}
+          defaultCostPriceCents={product.costPriceCents ?? product.priceCents}
           defaultMarginPercent={product.marginPercent}
           defaultPriceCents={product.priceCents}
           costError={typeof errors.costPrice === "string" ? errors.costPrice : undefined}
