@@ -2,7 +2,7 @@
 
 # Odentia Marketplace
 
-**Last Updated:** 2026-09-15
+**Last Updated:** 2026-09-15 (Checkpoint 2 added)
 
 ---
 
@@ -68,9 +68,19 @@ inventada.
   normalmente — confirma que la integración con Odentia no cerró el
   checkout público.
 
-**Siguiente paso — Order Attribution Checkpoint 2: Admin visibility.**
-Permitir que el operador Marketplace distinga, en el detalle de un pedido,
-si fue atribuido a Odentia/Core o si es guest, mostrando únicamente el
-contexto mínimo útil de atribución. Sin diseño de UI aún, sin clinic-name
-lookup, sin beneficios comerciales ni billing/subscription — no implementado
-todavía.
+**Order Attribution — Checkpoint 2: Admin visibility — implementado
+localmente, pendiente de smoke/manual verification en Production.** El
+detalle administrativo de un pedido (`/admin/pedidos/[id]`) ahora distingue
+`Cliente Odentia` de `Invitado`. Un pedido atribuido muestra `clinicId` y una
+etiqueta legible del `coreRole` snapshoteado al momento de la compra
+(`clinic_admin` → Administrador de clínica, `dentist` → Odontólogo,
+`assistant` → Asistente; un valor desconocido se muestra tal cual, nunca se
+inventa significado). `coreUserId` y `membershipId` siguen persistidos pero
+deliberadamente no se muestran en esta pantalla. No existe ningún lookup
+hacia Core: toda la información viene únicamente de la fila `Order` ya
+persistida localmente. Esta sección es puramente informativa — no es
+autorización, no es editable, y no cambia checkout/SSO/schema. Todavía no se
+ha verificado con un smoke real en Production.
+
+**Siguiente paso.** Ninguno definido todavía más allá de la verificación
+manual/Production del Checkpoint 2 anterior.
