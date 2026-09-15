@@ -37,10 +37,13 @@ export default async function ProductPage({
           <p className="text-xs uppercase tracking-wide text-primary font-semibold mb-2">
             {product.category.name}
           </p>
-          <h1 className="text-2xl font-bold text-foreground mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-1">
             {product.name}
           </h1>
-          <p className="text-muted-foreground mb-6">{product.description}</p>
+          {product.brand && (
+            <p className="text-sm text-muted-foreground mb-1">Marca: {product.brand}</p>
+          )}
+          <p className="text-muted-foreground mb-6 mt-3">{product.description}</p>
 
           <div className="border-t border-border pt-6">
             <div className="mb-4">

@@ -30,6 +30,8 @@ model Product {
   name        String
   slug        String         @unique
   description String?
+  brand       String?
+  distributor String?
   priceCents  Int
   stock       Int            @default(0)
   createdAt   DateTime       @default(now())

@@ -23,6 +23,8 @@ function parseProductFields(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
   const categoryId = String(formData.get("categoryId") ?? "");
   const description = String(formData.get("description") ?? "").trim();
+  const brand = String(formData.get("brand") ?? "").trim();
+  const distributor = String(formData.get("distributor") ?? "").trim();
   const price = Number(formData.get("price"));
   const stock = Number(formData.get("stock"));
 
@@ -38,6 +40,8 @@ function parseProductFields(formData: FormData) {
       name,
       categoryId,
       description: description || null,
+      brand: brand || null,
+      distributor: distributor || null,
       priceCents: Math.round(price),
       stock,
     },

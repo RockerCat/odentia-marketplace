@@ -98,6 +98,33 @@ export default async function EditProductPage({
 
         <div className="flex gap-4">
           <div className="flex-1">
+            <label htmlFor="brand" className="block text-sm font-medium text-foreground/80 mb-1">
+              Marca (opcional)
+            </label>
+            <input
+              type="text"
+              id="brand"
+              name="brand"
+              defaultValue={product.brand ?? ""}
+              className="w-full"
+            />
+          </div>
+          <div className="flex-1">
+            <label htmlFor="distributor" className="block text-sm font-medium text-foreground/80 mb-1">
+              Distribuidor (opcional)
+            </label>
+            <input
+              type="text"
+              id="distributor"
+              name="distributor"
+              defaultValue={product.distributor ?? ""}
+              className="w-full"
+            />
+          </div>
+        </div>
+
+        <div className="flex gap-4">
+          <div className="flex-1">
             <label htmlFor="price" className="block text-sm font-medium text-foreground/80 mb-1">
               Precio (COP)
             </label>
