@@ -31,9 +31,12 @@ export default async function EditCategoryPage({
         <input type="hidden" name="id" value={category.id} />
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Nombre</label>
+          <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">
+            Nombre
+          </label>
           <input
             type="text"
+            id="name"
             name="name"
             defaultValue={category.name}
             className="w-full rounded-md border-slate-300"

@@ -24,16 +24,20 @@ export default async function NewProductPage({
         className="bg-white rounded-xl border border-slate-200 p-6 max-w-xl space-y-4"
       >
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Nombre</label>
-          <input type="text" name="name" className="w-full rounded-md border-slate-300" />
+          <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">
+            Nombre
+          </label>
+          <input type="text" id="name" name="name" className="w-full rounded-md border-slate-300" />
           {typeof errors.name === "string" && (
             <p className="text-sm text-red-600 mt-1">{errors.name}</p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Categoría</label>
-          <select name="categoryId" className="w-full rounded-md border-slate-300">
+          <label htmlFor="categoryId" className="block text-sm font-medium text-slate-700 mb-1">
+            Categoría
+          </label>
+          <select id="categoryId" name="categoryId" className="w-full rounded-md border-slate-300">
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
@@ -46,17 +50,22 @@ export default async function NewProductPage({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Descripción</label>
-          <textarea name="description" rows={3} className="w-full rounded-md border-slate-300" />
+          <label htmlFor="description" className="block text-sm font-medium text-slate-700 mb-1">
+            Descripción
+          </label>
+          <textarea id="description" name="description" rows={3} className="w-full rounded-md border-slate-300" />
         </div>
 
         <div className="flex gap-4">
           <div className="flex-1">
-            <label className="block text-sm font-medium text-slate-700 mb-1">Precio (COP)</label>
+            <label htmlFor="price" className="block text-sm font-medium text-slate-700 mb-1">
+              Precio (COP)
+            </label>
             <input
               type="number"
               step="1"
               min="0"
+              id="price"
               name="price"
               placeholder="Ej. 45000"
               className="w-full rounded-md border-slate-300"
@@ -66,8 +75,10 @@ export default async function NewProductPage({
             )}
           </div>
           <div className="flex-1">
-            <label className="block text-sm font-medium text-slate-700 mb-1">Stock</label>
-            <input type="number" min="0" name="stock" className="w-full rounded-md border-slate-300" />
+            <label htmlFor="stock" className="block text-sm font-medium text-slate-700 mb-1">
+              Stock
+            </label>
+            <input type="number" min="0" id="stock" name="stock" className="w-full rounded-md border-slate-300" />
             {typeof errors.stock === "string" && (
               <p className="text-sm text-red-600 mt-1">{errors.stock}</p>
             )}
@@ -75,11 +86,12 @@ export default async function NewProductPage({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="options" className="block text-sm font-medium text-slate-700 mb-1">
             Opciones (opcional)
           </label>
           <input
             type="text"
+            id="options"
             name="options"
             placeholder="Ninguno"
             className="w-full rounded-md border-slate-300"
@@ -91,9 +103,12 @@ export default async function NewProductPage({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Imágenes</label>
+          <label htmlFor="images" className="block text-sm font-medium text-slate-700 mb-1">
+            Imágenes
+          </label>
           <input
             type="file"
+            id="images"
             name="images"
             multiple
             accept="image/jpeg,image/png,image/webp"

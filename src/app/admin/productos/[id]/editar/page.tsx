@@ -50,9 +50,12 @@ export default async function EditProductPage({
         <input type="hidden" name="id" value={product.id} />
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Nombre</label>
+          <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">
+            Nombre
+          </label>
           <input
             type="text"
+            id="name"
             name="name"
             defaultValue={product.name}
             className="w-full rounded-md border-slate-300"
@@ -63,8 +66,11 @@ export default async function EditProductPage({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Categoría</label>
+          <label htmlFor="categoryId" className="block text-sm font-medium text-slate-700 mb-1">
+            Categoría
+          </label>
           <select
+            id="categoryId"
             name="categoryId"
             defaultValue={product.categoryId}
             className="w-full rounded-md border-slate-300"
@@ -78,8 +84,11 @@ export default async function EditProductPage({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Descripción</label>
+          <label htmlFor="description" className="block text-sm font-medium text-slate-700 mb-1">
+            Descripción
+          </label>
           <textarea
+            id="description"
             name="description"
             rows={3}
             defaultValue={product.description ?? ""}
@@ -89,11 +98,14 @@ export default async function EditProductPage({
 
         <div className="flex gap-4">
           <div className="flex-1">
-            <label className="block text-sm font-medium text-slate-700 mb-1">Precio (COP)</label>
+            <label htmlFor="price" className="block text-sm font-medium text-slate-700 mb-1">
+              Precio (COP)
+            </label>
             <input
               type="number"
               step="1"
               min="0"
+              id="price"
               name="price"
               defaultValue={product.priceCents}
               className="w-full rounded-md border-slate-300"
@@ -103,10 +115,13 @@ export default async function EditProductPage({
             )}
           </div>
           <div className="flex-1">
-            <label className="block text-sm font-medium text-slate-700 mb-1">Stock</label>
+            <label htmlFor="stock" className="block text-sm font-medium text-slate-700 mb-1">
+              Stock
+            </label>
             <input
               type="number"
               min="0"
+              id="stock"
               name="stock"
               defaultValue={product.stock}
               className="w-full rounded-md border-slate-300"
@@ -118,11 +133,12 @@ export default async function EditProductPage({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
+          <label htmlFor="options" className="block text-sm font-medium text-slate-700 mb-1">
             Opciones (opcional)
           </label>
           <input
             type="text"
+            id="options"
             name="options"
             defaultValue={product.options.map((o) => o.label).join(", ")}
             placeholder="Ninguno"

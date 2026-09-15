@@ -15,13 +15,23 @@ export default function LoginForm() {
       )}
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Correo electrónico</label>
-        <input type="email" name="email" autoFocus className="w-full rounded-md border-slate-300" />
+        <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
+          Correo electrónico
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          autoFocus
+          className="w-full rounded-md border-slate-300"
+        />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Contraseña</label>
-        <input type="password" name="password" className="w-full rounded-md border-slate-300" />
+        <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">
+          Contraseña
+        </label>
+        <input type="password" id="password" name="password" className="w-full rounded-md border-slate-300" />
       </div>
 
       <button

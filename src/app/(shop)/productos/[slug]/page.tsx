@@ -58,10 +58,11 @@ export default async function ProductPage({
 
                 {product.options.length > 0 && (
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label htmlFor="option" className="block text-sm font-medium text-slate-700 mb-1">
                       Opción
                     </label>
                     <select
+                      id="option"
                       name="option"
                       required
                       className="rounded-md border-slate-300"
@@ -76,11 +77,12 @@ export default async function ProductPage({
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label htmlFor="quantity" className="block text-sm font-medium text-slate-700 mb-1">
                     Cantidad
                   </label>
                   <input
                     type="number"
+                    id="quantity"
                     name="quantity"
                     defaultValue={1}
                     min={1}

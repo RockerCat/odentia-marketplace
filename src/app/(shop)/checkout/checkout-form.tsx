@@ -25,40 +25,65 @@ export default function CheckoutForm() {
       )}
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Nombre completo</label>
-        <input type="text" name="customerName" className="w-full rounded-md border-slate-300" />
+        <label htmlFor="customerName" className="block text-sm font-medium text-slate-700 mb-1">
+          Nombre completo
+        </label>
+        <input
+          type="text"
+          id="customerName"
+          name="customerName"
+          className="w-full rounded-md border-slate-300"
+        />
         {state?.errors?.customerName && (
           <p className="text-sm text-red-600 mt-1">{state.errors.customerName}</p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Correo electrónico</label>
-        <input type="email" name="customerEmail" className="w-full rounded-md border-slate-300" />
+        <label htmlFor="customerEmail" className="block text-sm font-medium text-slate-700 mb-1">
+          Correo electrónico
+        </label>
+        <input
+          type="email"
+          id="customerEmail"
+          name="customerEmail"
+          className="w-full rounded-md border-slate-300"
+        />
         {state?.errors?.customerEmail && (
           <p className="text-sm text-red-600 mt-1">{state.errors.customerEmail}</p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Teléfono</label>
-        <input type="text" name="customerPhone" className="w-full rounded-md border-slate-300" />
+        <label htmlFor="customerPhone" className="block text-sm font-medium text-slate-700 mb-1">
+          Teléfono
+        </label>
+        <input
+          type="text"
+          id="customerPhone"
+          name="customerPhone"
+          className="w-full rounded-md border-slate-300"
+        />
         {state?.errors?.customerPhone && (
           <p className="text-sm text-red-600 mt-1">{state.errors.customerPhone}</p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Dirección de entrega</label>
-        <textarea name="address" rows={3} className="w-full rounded-md border-slate-300" />
+        <label htmlFor="address" className="block text-sm font-medium text-slate-700 mb-1">
+          Dirección de entrega
+        </label>
+        <textarea id="address" name="address" rows={3} className="w-full rounded-md border-slate-300" />
         {state?.errors?.address && (
           <p className="text-sm text-red-600 mt-1">{state.errors.address}</p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">Notas (opcional)</label>
-        <textarea name="notes" rows={2} className="w-full rounded-md border-slate-300" />
+        <label htmlFor="notes" className="block text-sm font-medium text-slate-700 mb-1">
+          Notas (opcional)
+        </label>
+        <textarea id="notes" name="notes" rows={2} className="w-full rounded-md border-slate-300" />
       </div>
 
       <p className="text-sm text-slate-400">

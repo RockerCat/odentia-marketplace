@@ -139,9 +139,12 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
   return (
     <div className="space-y-6">
       <div className="bg-white rounded-xl border border-slate-200 p-4">
-        <label className="block text-sm font-medium text-slate-700 mb-1">Archivo PDF</label>
+        <label htmlFor="pdf-file" className="block text-sm font-medium text-slate-700 mb-1">
+          Archivo PDF
+        </label>
         <input
           type="file"
+          id="pdf-file"
           accept="application/pdf"
           className={FILE_INPUT_CLASS}
           onChange={(e) => {

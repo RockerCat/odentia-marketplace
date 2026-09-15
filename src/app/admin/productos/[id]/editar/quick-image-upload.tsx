@@ -16,9 +16,12 @@ export default function QuickImageUpload({ productId }: { productId: string }) {
       className="bg-white rounded-xl border border-slate-200 p-4"
     >
       <input type="hidden" name="productId" value={productId} />
-      <label className="block text-sm font-medium text-slate-700 mb-1">Agregar imágenes</label>
+      <label htmlFor="images" className="block text-sm font-medium text-slate-700 mb-1">
+        Agregar imágenes
+      </label>
       <input
         type="file"
+        id="images"
         name="images"
         multiple
         accept="image/jpeg,image/png,image/webp"

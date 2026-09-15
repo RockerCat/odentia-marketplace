@@ -22,8 +22,10 @@ export default async function NewCategoryPage({
         className="bg-white rounded-xl border border-slate-200 p-6 max-w-md space-y-4"
       >
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Nombre</label>
-          <input type="text" name="name" className="w-full rounded-md border-slate-300" />
+          <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1">
+            Nombre
+          </label>
+          <input type="text" id="name" name="name" className="w-full rounded-md border-slate-300" />
         </div>
 
         <button
