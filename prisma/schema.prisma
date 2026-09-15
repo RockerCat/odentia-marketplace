@@ -36,6 +36,8 @@ model Product {
   images      ProductImage[]
   options     ProductOption[]
   orderItems  OrderItem[]
+
+  @@index([categoryId])
 }
 
 model ProductImage {
@@ -45,6 +47,8 @@ model ProductImage {
   path      String
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
+
+  @@index([productId])
 }
 
 // A simple selectable variant (e.g. "Copa", "Disco", "Punta") that shares the
@@ -56,6 +60,8 @@ model ProductOption {
   label     String
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
+
+  @@index([productId])
 }
 
 model Order {
@@ -101,6 +107,9 @@ model OrderItem {
   unitPriceCents Int
   quantity      Int
   subtotalCents Int
+
+  @@index([orderId])
+  @@index([productId])
 }
 
 enum OrderStatus {
