@@ -21,13 +21,14 @@ Marketplace de implementos odontológicos. Next.js (App Router) + PostgreSQL (Su
    - `DATABASE_URL`: cadena de conexión de Supabase (Project Settings → Database → Connection string).
    - `SESSION_SECRET`: generar con `openssl rand -base64 32`.
    - `NEXT_PUBLIC_SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY`: Project Settings → API.
+   - `SEED_ADMIN_EMAIL` y `SEED_ADMIN_PASSWORD`: sólo si vas a correr el seed (paso 4) — el admin del panel se crea con estas credenciales, no hay ningún default. `SEED_ADMIN_PASSWORD` debe tener al menos 12 caracteres.
 
 3. Aplicar el esquema a la base de datos:
    ```bash
    npx prisma migrate deploy
    ```
 
-4. (Opcional) Sembrar datos de ejemplo y el usuario admin (`admin@odentia.com` / `odentia2026`):
+4. (Opcional) Sembrar datos de ejemplo y el usuario admin. Requiere `SEED_ADMIN_EMAIL`/`SEED_ADMIN_PASSWORD` en `.env` (el seed falla si faltan o si la contraseña es muy corta):
    ```bash
    npx prisma db seed
    ```
