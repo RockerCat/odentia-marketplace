@@ -1,11 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { prisma } from "@/lib/prisma";
-import { formatPrice } from "@/lib/format";
 import { getProductImageUrl } from "@/lib/supabase";
 import FlashMessage from "../flash-message";
-import ConfirmSubmitButton from "@/components/confirm-submit-button";
-import { deleteProductAction } from "./actions";
+import ProductRow from "./product-row";
 
 export default async function AdminProductsPage({
   searchParams,
@@ -63,43 +60,11 @@ export default async function AdminProductsPage({
               </tr>
             )}
             {products.map((product) => (
-              <tr key={product.id} className="hover:bg-foreground/5">
-                <td className="px-5 py-3">
-                  <div className="w-10 h-10 rounded-lg bg-surface overflow-hidden flex items-center justify-center relative">
-                    {product.images[0] ? (
-                      <Image
-                        src={getProductImageUrl(product.images[0].path)}
-                        alt=""
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <span className="text-muted-foreground text-xs">—</span>
-                    )}
-                  </div>
-                </td>
-                <td className="px-5 py-3 font-medium text-foreground">{product.name}</td>
-                <td className="px-5 py-3 text-muted-foreground">{product.category.name}</td>
-                <td className="px-5 py-3">{formatPrice(product.priceCents)}</td>
-                <td className="px-5 py-3">{product.stock}</td>
-                <td className="px-5 py-3 text-right space-x-3">
-                  <Link
-                    href={`/admin/productos/${product.id}/editar`}
-                    className="text-primary hover:underline"
-                  >
-                    Editar
-                  </Link>
-                  <form action={deleteProductAction} className="inline">
-                    <input type="hidden" name="id" value={product.id} />
-                    <ConfirmSubmitButton
-                      confirmMessage="¿Eliminar este producto?"
-                      className="text-danger hover:underline"
-                    >
-                      Eliminar
-                    </ConfirmSubmitButton>
-                  </form>
-                </td>
-              </tr>
+              <ProductRow
+                key={product.id}
+                product={product}
+                imageUrl={product.images[0] ? getProductImageUrl(product.images[0].path) : null}
+              />
             ))}
           </tbody>
         </table>
