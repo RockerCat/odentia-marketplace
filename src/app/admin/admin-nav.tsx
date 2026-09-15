@@ -7,6 +7,7 @@ const links = [
   { href: "/admin", label: "Pedidos", match: (p: string) => p === "/admin" || p.startsWith("/admin/pedidos") },
   { href: "/admin/productos", label: "Productos", match: (p: string) => p.startsWith("/admin/productos") },
   { href: "/admin/categorias", label: "Categorías", match: (p: string) => p.startsWith("/admin/categorias") },
+  { href: "/admin/administradores", label: "Administradores", match: (p: string) => p.startsWith("/admin/administradores") },
 ];
 
 export default function AdminNav() {
