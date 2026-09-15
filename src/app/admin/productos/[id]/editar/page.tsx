@@ -46,7 +46,7 @@ export default async function EditProductPage({
 
       <form
         action={updateProductAction}
-        className="bg-background rounded-xl border border-border p-6 max-w-xl space-y-4"
+        className="bg-background rounded-xl border border-border p-8 max-w-3xl space-y-4"
       >
         <input type="hidden" name="id" value={product.id} />
 
@@ -143,7 +143,7 @@ export default async function EditProductPage({
             id="stock"
             name="stock"
             defaultValue={product.stock}
-            className="w-full max-w-[calc(50%-0.5rem)]"
+            className="w-full max-w-xs"
           />
           {typeof errors.stock === "string" && (
             <p className="text-sm text-danger mt-1">{errors.stock}</p>
@@ -176,7 +176,7 @@ export default async function EditProductPage({
         </button>
       </form>
 
-      <div className="max-w-xl mt-6">
+      <div className="max-w-3xl mt-6">
         <h2 className="text-sm font-medium text-foreground/80 mb-3">Imágenes</h2>
 
         {product.images.length > 0 && (

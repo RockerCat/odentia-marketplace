@@ -22,7 +22,7 @@ export default async function NewProductPage({
 
       <form
         action={createProductAction}
-        className="bg-background rounded-xl border border-border p-6 max-w-xl space-y-4"
+        className="bg-background rounded-xl border border-border p-8 max-w-3xl space-y-4"
       >
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-foreground/80 mb-1">
@@ -83,7 +83,7 @@ export default async function NewProductPage({
           <label htmlFor="stock" className="block text-sm font-medium text-foreground/80 mb-1">
             Stock
           </label>
-          <input type="number" min="0" id="stock" name="stock" className="w-full max-w-[calc(50%-0.5rem)]" />
+          <input type="number" min="0" id="stock" name="stock" className="w-full max-w-xs" />
           {typeof errors.stock === "string" && (
             <p className="text-sm text-danger mt-1">{errors.stock}</p>
           )}
