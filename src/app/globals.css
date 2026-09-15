@@ -1,8 +1,73 @@
 @import "tailwindcss";
 
+/* Foundation tokens — values match odentia-core's own
+   src/app/globals.css exactly, so Marketplace and Core share the same
+   visual language even though they're separate repos with no runtime
+   coupling. Only the tokens Marketplace's own surfaces have a real use
+   for are included here — Core also defines --noshow, --tooltip-tint and
+   --mobile-header-h/--mobile-tabbar-h, but those are specific to Core's
+   own clinical appointment UI and mobile app shell, which Marketplace
+   doesn't have, so they're deliberately left out. */
+:root {
+  --background: #ffffff;
+  --foreground: #2b303b;
+
+  --surface: #f7f8fa;
+  --border: #e9ebee;
+
+  --muted-foreground: #6b7280;
+  --label-foreground: #9ca3af;
+
+  --primary: #3eb0a0;
+  --primary-foreground: #ffffff;
+
+  --success: #137048;
+  --warning: #ff9200;
+  --danger: #c0392b;
+  --info: #2f6fb0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+
+  --color-muted-foreground: var(--muted-foreground);
+  --color-label-foreground: var(--label-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  /* No --font-mono here — Marketplace doesn't load Geist Mono (nothing in
+     this app renders monospace text) and only --font-sans is real. */
+  --font-sans: var(--font-geist-sans);
+
+  /* Same trimmed scale as Core — ~10-15% lighter than Tailwind's default
+     text-sm/base/xl without touching layout or spacing. */
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-xl: 1.09375rem;
+}
+
 body {
-  background: #f8fafc;
-  color: #1e293b;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
@@ -12,4 +77,19 @@ textarea {
   background-color: #fff;
   border-width: 1px;
   border-style: solid;
+}
+
+/* Mobile browsers (iOS Safari, Chrome on Android, etc.) auto-zoom the
+   viewport on focus when a form control's rendered font-size is under
+   16px. Floors every editable control to 16px on touch/narrow viewports
+   only — desktop sizing (and manual pinch-zoom, never disabled here) is
+   untouched. Same guardrail and selector list as Core's own globals.css. */
+@media (max-width: 767.98px), (pointer: coarse) {
+  input,
+  textarea,
+  select,
+  [contenteditable="true"],
+  [role="combobox"] {
+    font-size: 16px !important;
+  }
 }
