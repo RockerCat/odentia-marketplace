@@ -56,7 +56,7 @@ function isMembershipRole(value: unknown): value is MembershipRole {
 // but a malformed/partial payload (an upstream bug, or a stale token from a
 // future contract shape) must fail closed here, never get trusted
 // partially.
-function isCustomerIdentity(payload: unknown): payload is CustomerIdentity {
+export function isCustomerIdentity(payload: unknown): payload is CustomerIdentity {
   if (typeof payload !== "object" || payload === null) return false;
   const candidate = payload as Record<string, unknown>;
   return (
