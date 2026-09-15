@@ -46,7 +46,8 @@ export default async function AdminProductsPage({
               <th className="px-5 py-3"></th>
               <th className="px-5 py-3">Nombre</th>
               <th className="px-5 py-3">Categoría</th>
-              <th className="px-5 py-3">Precio</th>
+              <th className="px-5 py-3">Precio costo</th>
+              <th className="px-5 py-3">Precio venta</th>
               <th className="px-5 py-3">Stock</th>
               <th className="px-5 py-3"></th>
             </tr>
@@ -54,7 +55,7 @@ export default async function AdminProductsPage({
           <tbody className="divide-y divide-border">
             {products.length === 0 && (
               <tr>
-                <td className="px-5 py-6 text-muted-foreground" colSpan={6}>
+                <td className="px-5 py-6 text-muted-foreground" colSpan={7}>
                   No hay productos todavía.
                 </td>
               </tr>

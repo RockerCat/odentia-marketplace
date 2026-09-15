@@ -13,6 +13,7 @@ export default function ProductRow({
   product: {
     id: string;
     name: string;
+    costPriceCents: number | null;
     priceCents: number;
     stock: number;
     category: { name: string };
@@ -38,6 +39,9 @@ export default function ProductRow({
       </td>
       <td className="px-5 py-3 font-medium text-foreground">{product.name}</td>
       <td className="px-5 py-3 text-muted-foreground">{product.category.name}</td>
+      <td className="px-5 py-3 text-muted-foreground">
+        {formatPrice(product.costPriceCents ?? product.priceCents)}
+      </td>
       <td className="px-5 py-3">{formatPrice(product.priceCents)}</td>
       <td className="px-5 py-3">{product.stock}</td>
       <td className="px-5 py-3 text-right" onClick={(e) => e.stopPropagation()}>
