@@ -9,7 +9,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
 
   return (
     <div className="flex min-h-screen">
-      <aside className="w-56 shrink-0 bg-background border-r border-border flex flex-col">
+      <aside className="w-56 shrink-0 bg-background border-r border-border flex flex-col h-screen sticky top-0 overflow-y-auto">
         <div className="flex items-center justify-center border-b border-border px-4 py-8">
           <Image
             src="/branding/odentia.png"
