@@ -8,6 +8,24 @@ export type ParsedProductLine = {
 
 export type CategoryLookup = { id: string; name: string };
 
+// Bytes for the ASCII string "%PDF-" — the header every real PDF file
+// starts with (ISO 32000-1 §7.5.2). Compared as raw bytes, not as a decoded
+// string, so this checks the file's actual content rather than a text
+// interpretation of it.
+const PDF_SIGNATURE = [0x25, 0x50, 0x44, 0x46, 0x2d]; // "%PDF-"
+
+// Confirms the file's real bytes start with the PDF header. A client-
+// declared MIME type or a ".pdf" filename is just a label the client
+// attaches and proves nothing about the content — this checks the content
+// itself. This only proves the file HAS a PDF-shaped header, not that it is
+// a well-formed or safe PDF: a file that passes this can still be corrupt,
+// encrypted, or otherwise unparseable, and pdf-parse can still reject it —
+// that failure path is unchanged and still the right place to handle it.
+export function hasPdfSignature(bytes: Uint8Array): boolean {
+  if (bytes.length < PDF_SIGNATURE.length) return false;
+  return PDF_SIGNATURE.every((byte, i) => bytes[i] === byte);
+}
+
 // Matches either a thousands-grouped number (e.g. "1.905.754", "1.234,56")
 // or a plain two-decimal price (e.g. "15.50", "8,90"). Deliberately requires
 // a separator so it doesn't match bare SKU digits or percentages like "19%",

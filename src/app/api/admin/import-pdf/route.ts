@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { PDFParse } from "pdf-parse";
 import { getSession } from "@/lib/session";
-import { parseProductLines } from "@/lib/pdf-import";
+import { hasPdfSignature, parseProductLines } from "@/lib/pdf-import";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
@@ -18,6 +18,14 @@ export async function POST(request: Request) {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
+
+  // The MIME check above only reflects what the client claims the file is.
+  // Confirm the actual bytes look like a PDF before handing them to the
+  // parser — this doesn't validate the full PDF structure, only its header.
+  if (!hasPdfSignature(buffer)) {
+    return NextResponse.json({ error: "El archivo no es un PDF válido." }, { status: 400 });
+  }
+
   const parser = new PDFParse({ data: buffer });
 
   try {
