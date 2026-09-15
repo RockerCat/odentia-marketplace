@@ -2,7 +2,7 @@
 
 # Odentia Marketplace
 
-**Last Updated:** 2026-09-15 (Checkpoint 2 added)
+**Last Updated:** 2026-09-15 (Shared Cart Checkpoint A closed)
 
 ---
 
@@ -98,3 +98,34 @@ checkout/SSO/schema.
 
 Order attribution base is complete; next product/commercial phase to be
 defined separately.
+
+**Checkpoint 2026-09-15 — Shared Cart, Checkpoint A — PRODUCTION PASS.**
+Commit `436285a` (Marketplace); Core's read-only counterpart is commit
+`fff396b` in `odentia-core`. `odentia_cart` continues to be the single
+source of truth for the cart — Marketplace remains its only writer.
+In Production the cookie is domain-shared under `.odentia.co` so Core's
+authenticated header can read the same real cart server-side; Vercel
+Preview deployments and local development keep the previous host-only
+cookie unchanged (a `Domain` that doesn't match the actual response host
+would make the browser reject the cookie outright). Core only ever reads
+and derives a count (sum of quantities, same semantics as this repo's own
+`getCartCount()`) — it never writes, mutates, or clears this cookie, and
+there is no new API/fetch/DB involved on either side. The storefront header
+(`src/app/(shop)/layout.tsx`) now shows a cart icon with a badge (same
+orange treatment as Core's own cart badge) instead of the previous
+teal/primary text link, still driven entirely by the existing
+`getCartCount()`, hidden at 0.
+
+**Production smoke manual — 2026-09-15 — PASS:**
+- Marketplace cart at `1` → Core badge `1` after refresh — **PASS**.
+- Marketplace cart updated to `2` → Core badge `2` after refresh — **PASS**.
+- Marketplace cart cleared to empty → badge disappeared on both Marketplace
+  and Core — **PASS**.
+
+These three smokes are the only ones executed; full checkout was not
+re-tested as part of this checkpoint.
+
+**Shared Cart — Checkpoint A: CLOSED.**
+
+**Checkpoint B pending (not designed here):** navigating Core's cart icon
+through SSO to land on Marketplace's `/carrito`.

@@ -67,7 +67,7 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
             >
               <ShoppingCartIcon className="size-5" />
               {cartCount > 0 && (
-                <span className="absolute top-1 right-1 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                <span className="absolute top-1 right-1 flex size-4 items-center justify-center rounded-full bg-warning text-[10px] font-medium text-primary-foreground">
                   {cartCount}
                 </span>
               )}
