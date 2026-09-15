@@ -68,19 +68,33 @@ inventada.
   normalmente — confirma que la integración con Odentia no cerró el
   checkout público.
 
-**Order Attribution — Checkpoint 2: Admin visibility — implementado
-localmente, pendiente de smoke/manual verification en Production.** El
-detalle administrativo de un pedido (`/admin/pedidos/[id]`) ahora distingue
-`Cliente Odentia` de `Invitado`. Un pedido atribuido muestra `clinicId` y una
-etiqueta legible del `coreRole` snapshoteado al momento de la compra
-(`clinic_admin` → Administrador de clínica, `dentist` → Odontólogo,
-`assistant` → Asistente; un valor desconocido se muestra tal cual, nunca se
-inventa significado). `coreUserId` y `membershipId` siguen persistidos pero
-deliberadamente no se muestran en esta pantalla. No existe ningún lookup
-hacia Core: toda la información viene únicamente de la fila `Order` ya
-persistida localmente. Esta sección es puramente informativa — no es
-autorización, no es editable, y no cambia checkout/SSO/schema. Todavía no se
-ha verificado con un smoke real en Production.
+**Checkpoint 2026-09-15 — Order Attribution, Checkpoint 2: Admin visibility
+— PRODUCTION PASS.** Commit `77946ee`. El detalle administrativo de un
+pedido (`/admin/pedidos/[id]`) distingue `Cliente Odentia` de `Invitado`. Un
+pedido atribuido muestra `clinicId` y una etiqueta legible del `coreRole`
+snapshoteado al momento de la compra (`clinic_admin` → Administrador de
+clínica, `dentist` → Odontólogo, `assistant` → Asistente; un valor
+desconocido se muestra tal cual, nunca se inventa significado). `coreUserId`
+y `membershipId` siguen persistidos pero deliberadamente no se muestran en
+esta pantalla. No existe ningún lookup hacia Core: toda la información viene
+únicamente de la fila `Order` ya persistida localmente. Esta sección es
+puramente informativa — no es autorización, no es editable, y no cambió
+checkout/SSO/schema.
 
-**Siguiente paso.** Ninguno definido todavía más allá de la verificación
-manual/Production del Checkpoint 2 anterior.
+**Production smoke manual — 2026-09-15 — ambos escenarios PASS:**
+- **Guest Admin Visibility: PASS.** Sobre el Order guest de Checkpoint 1: se
+  ve el badge `Invitado` con su explicación, sin clínica/role, sin
+  `coreUserId`/`membershipId`, y el resto del detalle (incluyendo `Estado
+  del pedido`) funciona normalmente.
+- **Core-attributed Admin Visibility: PASS.** Sobre el Order Core-attributed
+  de Checkpoint 1: se ve el badge `Cliente Odentia`, la clínica vía
+  `clinicId`, el role como `Administrador de clínica` (snapshot
+  `clinic_admin`), sin `coreUserId`/`membershipId`, sin lookup hacia Core y
+  sin edición de attribution.
+
+**Order Attribution — estado general:**
+- Checkpoint 1 (persistence/server attribution): **PASS**.
+- Checkpoint 2 (admin visibility): **PRODUCTION PASS**.
+
+Order attribution base is complete; next product/commercial phase to be
+defined separately.
