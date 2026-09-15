@@ -7,6 +7,7 @@ import FlashMessage from "../../../flash-message";
 import ConfirmSubmitButton from "@/components/confirm-submit-button";
 import { updateProductAction, deleteProductImageAction } from "../../actions";
 import QuickImageUpload from "./quick-image-upload";
+import PriceCalculator from "../../price-calculator";
 
 export default async function EditProductPage({
   params,
@@ -123,40 +124,30 @@ export default async function EditProductPage({
           </div>
         </div>
 
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label htmlFor="price" className="block text-sm font-medium text-foreground/80 mb-1">
-              Precio (COP)
-            </label>
-            <input
-              type="number"
-              step="1"
-              min="0"
-              id="price"
-              name="price"
-              defaultValue={product.priceCents}
-              className="w-full"
-            />
-            {typeof errors.price === "string" && (
-              <p className="text-sm text-danger mt-1">{errors.price}</p>
-            )}
-          </div>
-          <div className="flex-1">
-            <label htmlFor="stock" className="block text-sm font-medium text-foreground/80 mb-1">
-              Stock
-            </label>
-            <input
-              type="number"
-              min="0"
-              id="stock"
-              name="stock"
-              defaultValue={product.stock}
-              className="w-full"
-            />
-            {typeof errors.stock === "string" && (
-              <p className="text-sm text-danger mt-1">{errors.stock}</p>
-            )}
-          </div>
+        <PriceCalculator
+          defaultCostPriceCents={product.costPriceCents}
+          defaultMarginPercent={product.marginPercent}
+          defaultPriceCents={product.priceCents}
+          costError={typeof errors.costPrice === "string" ? errors.costPrice : undefined}
+          marginError={typeof errors.marginPercent === "string" ? errors.marginPercent : undefined}
+          priceError={typeof errors.price === "string" ? errors.price : undefined}
+        />
+
+        <div>
+          <label htmlFor="stock" className="block text-sm font-medium text-foreground/80 mb-1">
+            Stock
+          </label>
+          <input
+            type="number"
+            min="0"
+            id="stock"
+            name="stock"
+            defaultValue={product.stock}
+            className="w-full max-w-[calc(50%-0.5rem)]"
+          />
+          {typeof errors.stock === "string" && (
+            <p className="text-sm text-danger mt-1">{errors.stock}</p>
+          )}
         </div>
 
         <div>

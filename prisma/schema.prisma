@@ -24,20 +24,22 @@ model Category {
 }
 
 model Product {
-  id          String         @id @default(cuid())
-  categoryId  String
-  category    Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  name        String
-  slug        String         @unique
-  description String?
-  brand       String?
-  distributor String?
-  priceCents  Int
-  stock       Int            @default(0)
-  createdAt   DateTime       @default(now())
-  images      ProductImage[]
-  options     ProductOption[]
-  orderItems  OrderItem[]
+  id             String          @id @default(cuid())
+  categoryId     String
+  category       Category        @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name           String
+  slug           String          @unique
+  description    String?
+  brand          String?
+  distributor    String?
+  costPriceCents Int?
+  marginPercent  Float?
+  priceCents     Int
+  stock          Int             @default(0)
+  createdAt      DateTime        @default(now())
+  images         ProductImage[]
+  options        ProductOption[]
+  orderItems     OrderItem[]
 
   @@index([categoryId])
 }
@@ -99,16 +101,16 @@ model Order {
 }
 
 model OrderItem {
-  id            String   @id @default(cuid())
-  orderId       String
-  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  productId     String?
-  product       Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
-  productName   String
-  optionLabel   String?
+  id             String   @id @default(cuid())
+  orderId        String
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String?
+  product        Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productName    String
+  optionLabel    String?
   unitPriceCents Int
-  quantity      Int
-  subtotalCents Int
+  quantity       Int
+  subtotalCents  Int
 
   @@index([orderId])
   @@index([productId])

@@ -25,6 +25,10 @@ function parseProductFields(formData: FormData) {
   const description = String(formData.get("description") ?? "").trim();
   const brand = String(formData.get("brand") ?? "").trim();
   const distributor = String(formData.get("distributor") ?? "").trim();
+  const costPriceRaw = String(formData.get("costPrice") ?? "").trim();
+  const marginPercentRaw = String(formData.get("marginPercent") ?? "").trim();
+  const costPrice = costPriceRaw ? Number(costPriceRaw) : null;
+  const marginPercent = marginPercentRaw ? Number(marginPercentRaw) : null;
   const price = Number(formData.get("price"));
   const stock = Number(formData.get("stock"));
 
@@ -33,6 +37,12 @@ function parseProductFields(formData: FormData) {
   if (!categoryId) errors.categoryId = "Selecciona una categoría.";
   if (!Number.isFinite(price) || price < 0) errors.price = "Precio inválido.";
   if (!Number.isFinite(stock) || stock < 0) errors.stock = "Stock inválido.";
+  if (costPriceRaw && (costPrice === null || !Number.isFinite(costPrice) || costPrice < 0)) {
+    errors.costPrice = "Precio de costo inválido.";
+  }
+  if (marginPercentRaw && (marginPercent === null || !Number.isFinite(marginPercent) || marginPercent < 0)) {
+    errors.marginPercent = "Margen inválido.";
+  }
 
   return {
     errors,
@@ -42,6 +52,10 @@ function parseProductFields(formData: FormData) {
       description: description || null,
       brand: brand || null,
       distributor: distributor || null,
+      costPriceCents:
+        costPrice !== null && Number.isFinite(costPrice) ? Math.round(costPrice) : null,
+      marginPercent:
+        marginPercent !== null && Number.isFinite(marginPercent) ? marginPercent : null,
       priceCents: Math.round(price),
       stock,
     },

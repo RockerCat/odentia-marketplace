@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { createProductAction } from "../actions";
+import PriceCalculator from "../price-calculator";
 
 const FILE_INPUT_CLASS =
   "block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary file:text-primary-foreground file:font-medium file:cursor-pointer hover:file:opacity-90";
@@ -71,33 +72,21 @@ export default async function NewProductPage({
           </div>
         </div>
 
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label htmlFor="price" className="block text-sm font-medium text-foreground/80 mb-1">
-              Precio (COP)
-            </label>
-            <input
-              type="number"
-              step="1"
-              min="0"
-              id="price"
-              name="price"
-              placeholder="Ej. 45000"
-              className="w-full"
-            />
-            {typeof errors.price === "string" && (
-              <p className="text-sm text-danger mt-1">{errors.price}</p>
-            )}
-          </div>
-          <div className="flex-1">
-            <label htmlFor="stock" className="block text-sm font-medium text-foreground/80 mb-1">
-              Stock
-            </label>
-            <input type="number" min="0" id="stock" name="stock" className="w-full" />
-            {typeof errors.stock === "string" && (
-              <p className="text-sm text-danger mt-1">{errors.stock}</p>
-            )}
-          </div>
+        <PriceCalculator
+          defaultPriceCents={0}
+          costError={typeof errors.costPrice === "string" ? errors.costPrice : undefined}
+          marginError={typeof errors.marginPercent === "string" ? errors.marginPercent : undefined}
+          priceError={typeof errors.price === "string" ? errors.price : undefined}
+        />
+
+        <div>
+          <label htmlFor="stock" className="block text-sm font-medium text-foreground/80 mb-1">
+            Stock
+          </label>
+          <input type="number" min="0" id="stock" name="stock" className="w-full max-w-[calc(50%-0.5rem)]" />
+          {typeof errors.stock === "string" && (
+            <p className="text-sm text-danger mt-1">{errors.stock}</p>
+          )}
         </div>
 
         <div>
