@@ -2,7 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import LoginForm from "./login-form";
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: PageProps<"/login">) {
+  const { success } = await searchParams;
+  const successMessage = typeof success === "string" ? success : undefined;
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface">
       <div className="w-full max-w-sm bg-background rounded-xl border border-border p-8">
@@ -17,6 +22,12 @@ export default function LoginPage() {
           />
           <p className="text-sm text-muted-foreground mt-3">Panel de administración</p>
         </div>
+
+        {successMessage && (
+          <div className="rounded-lg bg-success/10 border border-success/30 text-success px-4 py-3 text-sm mb-4">
+            {successMessage}
+          </div>
+        )}
 
         <LoginForm />
 
