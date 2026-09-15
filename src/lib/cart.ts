@@ -4,6 +4,26 @@ import { prisma } from "@/lib/prisma";
 
 const COOKIE_NAME = "odentia_cart";
 
+// Same production signal already used for `secure` below.
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
+
+// Shared Cart Checkpoint A: in Production this cookie is domain-shared
+// with Core (see SHARED_CART_DOMAIN) so Core's header can read the same
+// real cart server-side. Deliberately NOT gated on IS_PRODUCTION/NODE_ENV
+// above — Vercel Preview deployments also run with NODE_ENV=production,
+// but they're served from *.vercel.app, where a Domain=.odentia.co
+// attribute doesn't match the actual response host at all. A browser
+// rejects the ENTIRE Set-Cookie header when that happens, which would
+// break the cart outright on every Preview deployment, not just fail to
+// share it. VERCEL_ENV is the standard, platform-injected variable Vercel
+// itself sets to exactly "production" | "preview" | "development" — no
+// custom env var needed — so this is the one condition precise enough to
+// only ever fire on the real marketplace.odentia.co deployment. Local dev
+// has no VERCEL_ENV at all, so it falls through to host-only exactly like
+// Preview does.
+const SHOULD_SHARE_CART_DOMAIN = process.env.VERCEL_ENV === "production";
+const SHARED_CART_DOMAIN = ".odentia.co";
+
 // Keyed by "productId" or "productId::optionLabel" so a product with several
 // options (e.g. "Copa" and "Disco") can sit in the cart as separate lines.
 type RawCart = Record<string, number>;
@@ -34,10 +54,11 @@ async function writeCart(cart: RawCart) {
   const cookieStore = await cookies();
   cookieStore.set(COOKIE_NAME, JSON.stringify(cart), {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: IS_PRODUCTION,
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 30,
+    ...(SHOULD_SHARE_CART_DOMAIN ? { domain: SHARED_CART_DOMAIN } : {}),
   });
 }
 
@@ -78,7 +99,16 @@ export async function removeFromCart(key: string) {
 
 export async function clearCart() {
   const cookieStore = await cookies();
-  cookieStore.delete(COOKIE_NAME);
+  // Must target the exact same scope writeCart() used to set it (same
+  // SHOULD_SHARE_CART_DOMAIN condition), or this would leave the real
+  // (domain-shared) cookie in place while only ever clearing a host-only
+  // cookie that was never actually set — the stale-cookie bug flagged
+  // during the cart audit.
+  if (SHOULD_SHARE_CART_DOMAIN) {
+    cookieStore.delete({ name: COOKIE_NAME, path: "/", domain: SHARED_CART_DOMAIN });
+  } else {
+    cookieStore.delete(COOKIE_NAME);
+  }
 }
 
 export async function getCartItems() {

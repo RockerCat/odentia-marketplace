@@ -6,6 +6,7 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCartItems, clearCart } from "@/lib/cart";
 import { generateOrderAccessToken, grantOrderAccess, hashOrderAccessToken } from "@/lib/order-access";
+import { getCustomerSession } from "@/lib/customer-session";
 
 const CheckoutSchema = z.object({
   customerName: z.string().min(1, "El nombre es obligatorio."),
@@ -120,6 +121,15 @@ export async function placeOrderAction(
 
   const totalCents = items.reduce((sum, item) => sum + item.subtotalCents, 0);
   const accessToken = generateOrderAccessToken();
+  // Read exactly once, here, on the branch that is actually about to create
+  // a NEW Order — never inside redirectToExistingOrder(). Attribution is
+  // decided once at creation and must never drift on a retry: a resubmit
+  // always short-circuits via the idempotencyKey lookup above before this
+  // line is ever reached, so a session that changed/expired/disappeared
+  // between attempts can never touch an already-created Order's
+  // attribution. null (no session, or an invalid/expired one) simply means
+  // a guest order — getCustomerSession() never throws.
+  const customerSession = await getCustomerSession();
 
   let order;
   try {
@@ -148,6 +158,15 @@ export async function placeOrderAction(
           accessTokenHash: hashOrderAccessToken(accessToken),
           totalCents,
           status: "PENDIENTE_PAGO",
+          // Trust boundary: these four values come ONLY from the
+          // server-verified customerSession above — never from formData,
+          // a hidden input, or any other client-supplied value. parsed.data
+          // (customerName/Email/Phone/address/notes) stays the independent
+          // order/contact snapshot regardless of who's attributed.
+          coreUserId: customerSession?.coreUserId ?? null,
+          clinicId: customerSession?.clinicId ?? null,
+          membershipId: customerSession?.membershipId ?? null,
+          coreRole: customerSession?.role ?? null,
           items: {
             create: items.map((item) => ({
               productId: item.product.id,

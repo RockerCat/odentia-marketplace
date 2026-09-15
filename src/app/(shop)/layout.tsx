@@ -2,6 +2,31 @@ import Link from "next/link";
 import Image from "next/image";
 import { getCartCount } from "@/lib/cart";
 
+// Same SVG geometry/stroke language as the ShoppingCartIcon already
+// approved in odentia-core's src/components/shell/icons.tsx — replicated
+// here (not imported/shared) since Core and Marketplace are separate
+// repos/deployments; this is a small, self-contained icon, not shared
+// runtime code.
+function ShoppingCartIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+      className={className}
+    >
+      <circle cx="9" cy="20" r="1.5" />
+      <circle cx="18" cy="20" r="1.5" />
+      <path d="M3 4h2l2.2 11a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L20.5 8H6.5" />
+    </svg>
+  );
+}
+
 export default async function ShopLayout({ children }: LayoutProps<"/">) {
   const cartCount = await getCartCount();
 
@@ -35,10 +60,14 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
             <Link href="/" className="hidden sm:inline hover:text-teal-700">
               Catálogo
             </Link>
-            <Link href="/carrito" className="hover:text-teal-700">
-              Carrito
+            <Link
+              href="/carrito"
+              aria-label={cartCount > 0 ? `Carrito, ${cartCount} producto${cartCount === 1 ? "" : "s"}` : "Carrito"}
+              className="relative flex size-9 items-center justify-center text-foreground/80 hover:text-teal-700"
+            >
+              <ShoppingCartIcon className="size-5" />
               {cartCount > 0 && (
-                <span className="ml-1 inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs w-5 h-5">
+                <span className="absolute top-1 right-1 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
                   {cartCount}
                 </span>
               )}
