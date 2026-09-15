@@ -10,6 +10,13 @@ const STATUS_LABELS: Record<string, string> = {
   CANCELADO: "cancelado",
 };
 
+const STATUS_STYLES: Record<string, string> = {
+  PENDIENTE_PAGO: "bg-warning/10 text-warning",
+  PAGADO: "bg-success/10 text-success",
+  ENVIADO: "bg-info/10 text-info",
+  CANCELADO: "bg-danger/10 text-danger",
+};
+
 export default async function AdminOrdersPage({
   searchParams,
 }: PageProps<"/admin">) {
@@ -27,11 +34,11 @@ export default async function AdminOrdersPage({
         error={typeof error === "string" ? error : undefined}
       />
 
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">Pedidos</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-6">Pedidos</h1>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-background rounded-xl border border-border overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-slate-500 text-left">
+          <thead className="bg-surface text-muted-foreground text-left">
             <tr>
               <th className="px-5 py-3">#</th>
               <th className="px-5 py-3">Cliente</th>
@@ -40,20 +47,20 @@ export default async function AdminOrdersPage({
               <th className="px-5 py-3">Fecha</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-border">
             {orders.length === 0 && (
               <tr>
-                <td className="px-5 py-6 text-slate-400" colSpan={5}>
+                <td className="px-5 py-6 text-muted-foreground" colSpan={5}>
                   Todavía no hay pedidos.
                 </td>
               </tr>
             )}
             {orders.map((order) => (
-              <tr key={order.id} className="hover:bg-slate-50">
+              <tr key={order.id} className="hover:bg-foreground/5">
                 <td className="px-5 py-3">
                   <Link
                     href={`/admin/pedidos/${order.id}`}
-                    className="text-teal-700 font-medium hover:underline"
+                    className="text-primary font-medium hover:underline"
                   >
                     #{order.id.slice(-8)}
                   </Link>
@@ -61,11 +68,13 @@ export default async function AdminOrdersPage({
                 <td className="px-5 py-3">{order.customerName}</td>
                 <td className="px-5 py-3">{formatPrice(order.totalCents)}</td>
                 <td className="px-5 py-3">
-                  <span className="inline-block px-2 py-1 rounded-full text-xs bg-slate-100">
+                  <span
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${STATUS_STYLES[order.status]}`}
+                  >
                     {STATUS_LABELS[order.status]}
                   </span>
                 </td>
-                <td className="px-5 py-3 text-slate-400">
+                <td className="px-5 py-3 text-muted-foreground">
                   {order.createdAt.toLocaleString("es", {
                     day: "2-digit",
                     month: "2-digit",

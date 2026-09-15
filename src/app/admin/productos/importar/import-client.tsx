@@ -16,7 +16,7 @@ type Row = {
 };
 
 const FILE_INPUT_CLASS =
-  "block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-teal-700 file:text-white file:font-medium file:cursor-pointer hover:file:bg-teal-800";
+  "block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary file:text-primary-foreground file:font-medium file:cursor-pointer hover:file:opacity-90";
 
 export default function ImportPdfClient({ categories }: { categories: Category[] }) {
   const router = useRouter();
@@ -138,8 +138,8 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl border border-slate-200 p-4">
-        <label htmlFor="pdf-file" className="block text-sm font-medium text-slate-700 mb-1">
+      <div className="bg-background rounded-xl border border-border p-4">
+        <label htmlFor="pdf-file" className="block text-sm font-medium text-foreground/80 mb-1">
           Archivo PDF
         </label>
         <input
@@ -152,21 +152,21 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
             if (file) handleFile(file);
           }}
         />
-        {fileName && <p className="text-xs text-slate-400 mt-1">Archivo: {fileName}</p>}
-        {status === "parsing" && <p className="text-sm text-teal-700 mt-2">Leyendo PDF…</p>}
+        {fileName && <p className="text-xs text-muted-foreground mt-1">Archivo: {fileName}</p>}
+        {status === "parsing" && <p className="text-sm text-primary mt-2">Leyendo PDF…</p>}
       </div>
 
       {error && (
-        <div className="rounded-lg bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 text-sm">
+        <div className="rounded-lg bg-warning/10 border border-warning/30 text-warning px-4 py-3 text-sm">
           {error}
         </div>
       )}
 
       {(rows.length > 0 || fileName) && (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="bg-background rounded-xl border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-slate-500 text-left">
+              <thead className="bg-surface text-muted-foreground text-left">
                 <tr>
                   <th className="px-3 py-2"></th>
                   <th className="px-3 py-2">Nombre</th>
@@ -177,7 +177,7 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
                   <th className="px-3 py-2"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-border">
                 {rows.map((row) => (
                   <tr key={row.id} className={row.include ? "" : "opacity-40"}>
                     <td className="px-3 py-2">
@@ -192,14 +192,14 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
                         type="text"
                         value={row.name}
                         onChange={(e) => updateRow(row.id, { name: e.target.value })}
-                        className="w-56 rounded-md border-slate-300 text-sm"
+                        className="w-56 text-sm"
                       />
                     </td>
                     <td className="px-3 py-2">
                       <select
                         value={row.categoryId}
                         onChange={(e) => updateRow(row.id, { categoryId: e.target.value })}
-                        className="rounded-md border-slate-300 text-sm"
+                        className="text-sm"
                       >
                         {categories.map((cat) => (
                           <option key={cat.id} value={cat.id}>
@@ -215,7 +215,7 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
                         min="0"
                         value={row.price}
                         onChange={(e) => updateRow(row.id, { price: e.target.value })}
-                        className="w-28 rounded-md border-slate-300 text-sm"
+                        className="w-28 text-sm"
                       />
                     </td>
                     <td className="px-3 py-2">
@@ -225,7 +225,7 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
                         placeholder="0"
                         value={row.stock}
                         onChange={(e) => updateRow(row.id, { stock: e.target.value })}
-                        className="w-20 rounded-md border-slate-300 text-sm"
+                        className="w-20 text-sm"
                       />
                     </td>
                     <td className="px-3 py-2">
@@ -234,14 +234,14 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
                         value={row.options}
                         onChange={(e) => updateRow(row.id, { options: e.target.value })}
                         placeholder="Ninguno"
-                        className="w-40 rounded-md border-slate-300 text-sm"
+                        className="w-40 text-sm"
                       />
                     </td>
                     <td className="px-3 py-2">
                       <button
                         type="button"
                         onClick={() => removeRow(row.id)}
-                        className="text-red-500 hover:underline text-xs"
+                        className="text-danger hover:underline text-xs"
                       >
                         Quitar
                       </button>
@@ -250,7 +250,7 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
                 ))}
                 {rows.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="px-3 py-6 text-center text-slate-400">
+                    <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">
                       Sin filas todavía.
                     </td>
                   </tr>
@@ -259,11 +259,11 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
             </table>
           </div>
 
-          <div className="p-3 border-t border-slate-100">
+          <div className="p-3 border-t border-border">
             <button
               type="button"
               onClick={addEmptyRow}
-              className="text-sm text-teal-700 hover:underline"
+              className="text-sm text-primary hover:underline"
             >
               + Agregar fila manual
             </button>
@@ -276,14 +276,14 @@ export default function ImportPdfClient({ categories }: { categories: Category[]
           type="button"
           disabled={validRows.length === 0 || status === "creating"}
           onClick={handleCreate}
-          className="bg-teal-700 text-white px-5 py-2.5 rounded-md font-medium hover:bg-teal-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-primary text-primary-foreground px-5 py-2.5 rounded-lg font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {status === "creating"
             ? "Creando…"
             : `Crear ${validRows.length} producto${validRows.length === 1 ? "" : "s"}`}
         </button>
       )}
-      <p className="text-xs text-slate-400">
+      <p className="text-xs text-muted-foreground">
         Solo se crean las filas marcadas con datos completos (nombre, categoría, precio y stock).
       </p>
     </div>

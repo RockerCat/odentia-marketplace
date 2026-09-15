@@ -9,19 +9,19 @@ export default async function CartPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-slate-900 mb-8">Tu carrito</h1>
+      <h1 className="text-3xl font-bold text-foreground mb-8">Tu carrito</h1>
 
       {items.length === 0 ? (
-        <p className="text-slate-500">
+        <p className="text-muted-foreground">
           Tu carrito está vacío.{" "}
-          <Link href="/" className="text-teal-700 hover:underline">
+          <Link href="/" className="text-primary hover:underline">
             Ver catálogo
           </Link>
           .
         </p>
       ) : (
         <>
-          <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100">
+          <div className="bg-background rounded-xl border border-border divide-y divide-border">
             {items.map((item) => (
               <div
                 key={item.key}
@@ -30,14 +30,14 @@ export default async function CartPage() {
                 <div className="flex-1">
                   <Link
                     href={`/productos/${item.product.slug}`}
-                    className="font-semibold text-slate-900 hover:text-teal-700"
+                    className="font-semibold text-foreground hover:text-primary"
                   >
                     {item.product.name}
                   </Link>
                   {item.option && (
-                    <p className="text-sm text-teal-700">Opción: {item.option}</p>
+                    <p className="text-sm text-primary">Opción: {item.option}</p>
                   )}
-                  <p className="text-sm text-slate-400">
+                  <p className="text-sm text-muted-foreground">
                     {formatPrice(item.product.priceCents)} c/u
                   </p>
                 </div>
@@ -50,20 +50,20 @@ export default async function CartPage() {
                     defaultValue={item.quantity}
                     min={0}
                     max={item.product.stock}
-                    className="w-16 rounded-md border-slate-300 text-center text-sm"
+                    className="w-16 text-center text-sm"
                   />
-                  <button type="submit" className="text-sm text-teal-700 hover:underline">
+                  <button type="submit" className="text-sm text-primary hover:underline">
                     Actualizar
                   </button>
                 </form>
 
-                <p className="w-24 text-right font-semibold text-slate-900">
+                <p className="w-24 text-right font-semibold text-foreground">
                   {formatPrice(item.subtotalCents)}
                 </p>
 
                 <form action={removeFromCartAction}>
                   <input type="hidden" name="key" value={item.key} />
-                  <button type="submit" className="text-sm text-red-500 hover:underline">
+                  <button type="submit" className="text-sm text-danger hover:underline">
                     Quitar
                   </button>
                 </form>
@@ -72,12 +72,12 @@ export default async function CartPage() {
           </div>
 
           <div className="mt-6 flex items-center justify-between">
-            <p className="text-xl font-bold text-slate-900">
+            <p className="text-xl font-bold text-foreground">
               Total: {formatPrice(total)}
             </p>
             <Link
               href="/checkout"
-              className="bg-teal-700 text-white px-6 py-3 rounded-md font-medium hover:bg-teal-800"
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:opacity-90"
             >
               Continuar al checkout
             </Link>

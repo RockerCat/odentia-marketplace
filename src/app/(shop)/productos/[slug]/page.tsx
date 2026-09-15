@@ -26,28 +26,28 @@ export default async function ProductPage({
 
   return (
     <div>
-      <Link href="/" className="text-sm text-teal-700 hover:underline">
+      <Link href="/" className="text-sm text-primary hover:underline">
         &larr; Volver al catálogo
       </Link>
 
       <div className="mt-6 flex flex-col lg:flex-row gap-8 max-w-4xl">
         <ProductGallery images={imageUrls} alt={product.name} />
 
-        <div className="flex-1 bg-white rounded-xl border border-slate-200 p-8">
-          <p className="text-xs uppercase tracking-wide text-teal-700 font-semibold mb-2">
+        <div className="flex-1 bg-background rounded-xl border border-border p-8">
+          <p className="text-xs uppercase tracking-wide text-primary font-semibold mb-2">
             {product.category.name}
           </p>
-          <h1 className="text-2xl font-bold text-slate-900 mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-4">
             {product.name}
           </h1>
-          <p className="text-slate-600 mb-6">{product.description}</p>
+          <p className="text-muted-foreground mb-6">{product.description}</p>
 
-          <div className="border-t border-slate-100 pt-6">
+          <div className="border-t border-border pt-6">
             <div className="mb-4">
-              <p className="text-3xl font-bold text-slate-900">
+              <p className="text-3xl font-bold text-foreground">
                 {formatPrice(product.priceCents)}
               </p>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 {product.stock} disponibles
               </p>
             </div>
@@ -58,15 +58,10 @@ export default async function ProductPage({
 
                 {product.options.length > 0 && (
                   <div>
-                    <label htmlFor="option" className="block text-sm font-medium text-slate-700 mb-1">
+                    <label htmlFor="option" className="block text-sm font-medium text-foreground/80 mb-1">
                       Opción
                     </label>
-                    <select
-                      id="option"
-                      name="option"
-                      required
-                      className="rounded-md border-slate-300"
-                    >
+                    <select id="option" name="option" required>
                       {product.options.map((opt) => (
                         <option key={opt.id} value={opt.label}>
                           {opt.label}
@@ -77,7 +72,7 @@ export default async function ProductPage({
                 )}
 
                 <div>
-                  <label htmlFor="quantity" className="block text-sm font-medium text-slate-700 mb-1">
+                  <label htmlFor="quantity" className="block text-sm font-medium text-foreground/80 mb-1">
                     Cantidad
                   </label>
                   <input
@@ -87,19 +82,19 @@ export default async function ProductPage({
                     defaultValue={1}
                     min={1}
                     max={product.stock}
-                    className="w-20 rounded-md border-slate-300 text-center"
+                    className="w-20 text-center"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="bg-teal-700 text-white px-5 py-2.5 rounded-md font-medium hover:bg-teal-800"
+                  className="bg-primary text-primary-foreground px-5 py-2.5 rounded-lg font-medium hover:opacity-90"
                 >
                   Agregar al carrito
                 </button>
               </form>
             ) : (
-              <span className="text-red-600 font-medium">Sin stock</span>
+              <span className="text-danger font-medium">Sin stock</span>
             )}
           </div>
         </div>

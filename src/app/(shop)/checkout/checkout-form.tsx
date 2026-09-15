@@ -15,78 +15,78 @@ export default function CheckoutForm() {
   const [idempotencyKey] = useState(() => crypto.randomUUID());
 
   return (
-    <form action={action} className="flex-1 bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+    <form action={action} className="flex-1 bg-background rounded-xl border border-border p-6 space-y-4">
       <input type="hidden" name="idempotencyKey" value={idempotencyKey} />
 
       {state?.formError && (
-        <div className="rounded-md bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">
+        <div className="rounded-lg bg-danger/10 border border-danger/30 text-danger px-4 py-3 text-sm">
           {state.formError}
         </div>
       )}
 
       <div>
-        <label htmlFor="customerName" className="block text-sm font-medium text-slate-700 mb-1">
+        <label htmlFor="customerName" className="block text-sm font-medium text-foreground/80 mb-1">
           Nombre completo
         </label>
         <input
           type="text"
           id="customerName"
           name="customerName"
-          className="w-full rounded-md border-slate-300"
+          className="w-full"
         />
         {state?.errors?.customerName && (
-          <p className="text-sm text-red-600 mt-1">{state.errors.customerName}</p>
+          <p className="text-sm text-danger mt-1">{state.errors.customerName}</p>
         )}
       </div>
 
       <div>
-        <label htmlFor="customerEmail" className="block text-sm font-medium text-slate-700 mb-1">
+        <label htmlFor="customerEmail" className="block text-sm font-medium text-foreground/80 mb-1">
           Correo electrónico
         </label>
         <input
           type="email"
           id="customerEmail"
           name="customerEmail"
-          className="w-full rounded-md border-slate-300"
+          className="w-full"
         />
         {state?.errors?.customerEmail && (
-          <p className="text-sm text-red-600 mt-1">{state.errors.customerEmail}</p>
+          <p className="text-sm text-danger mt-1">{state.errors.customerEmail}</p>
         )}
       </div>
 
       <div>
-        <label htmlFor="customerPhone" className="block text-sm font-medium text-slate-700 mb-1">
+        <label htmlFor="customerPhone" className="block text-sm font-medium text-foreground/80 mb-1">
           Teléfono
         </label>
         <input
           type="text"
           id="customerPhone"
           name="customerPhone"
-          className="w-full rounded-md border-slate-300"
+          className="w-full"
         />
         {state?.errors?.customerPhone && (
-          <p className="text-sm text-red-600 mt-1">{state.errors.customerPhone}</p>
+          <p className="text-sm text-danger mt-1">{state.errors.customerPhone}</p>
         )}
       </div>
 
       <div>
-        <label htmlFor="address" className="block text-sm font-medium text-slate-700 mb-1">
+        <label htmlFor="address" className="block text-sm font-medium text-foreground/80 mb-1">
           Dirección de entrega
         </label>
-        <textarea id="address" name="address" rows={3} className="w-full rounded-md border-slate-300" />
+        <textarea id="address" name="address" rows={3} className="w-full" />
         {state?.errors?.address && (
-          <p className="text-sm text-red-600 mt-1">{state.errors.address}</p>
+          <p className="text-sm text-danger mt-1">{state.errors.address}</p>
         )}
       </div>
 
       <div>
-        <label htmlFor="notes" className="block text-sm font-medium text-slate-700 mb-1">
+        <label htmlFor="notes" className="block text-sm font-medium text-foreground/80 mb-1">
           Notas (opcional)
         </label>
-        <textarea id="notes" name="notes" rows={2} className="w-full rounded-md border-slate-300" />
+        <textarea id="notes" name="notes" rows={2} className="w-full" />
       </div>
 
-      <p className="text-sm text-slate-400">
+      <p className="text-sm text-muted-foreground">
         El pago se coordina directamente con Odentia luego de confirmar el pedido (transferencia o
         contra-entrega).
       </p>
@@ -94,7 +94,7 @@ export default function CheckoutForm() {
       <button
         type="submit"
         disabled={pending}
-        className="w-full bg-teal-700 text-white px-6 py-3 rounded-md font-medium hover:bg-teal-800 disabled:opacity-60"
+        className="w-full bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:opacity-90 disabled:opacity-60"
       >
         {pending ? "Enviando…" : "Confirmar pedido"}
       </button>

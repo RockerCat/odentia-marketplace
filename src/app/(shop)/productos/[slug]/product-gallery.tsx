@@ -14,11 +14,11 @@ export default function ProductGallery({
 
   return (
     <div className="lg:w-96 shrink-0">
-      <div className="aspect-square bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center relative">
+      <div className="aspect-square bg-surface rounded-xl overflow-hidden flex items-center justify-center relative">
         {images.length > 0 ? (
           <Image src={images[active]} alt={alt} fill className="object-cover" />
         ) : (
-          <span className="text-slate-300 text-sm">Sin imagen</span>
+          <span className="text-muted-foreground text-sm">Sin imagen</span>
         )}
       </div>
 
@@ -29,8 +29,8 @@ export default function ProductGallery({
               key={src}
               type="button"
               onClick={() => setActive(i)}
-              className={`w-16 h-16 rounded-md overflow-hidden border relative ${
-                i === active ? "border-teal-600" : "border-slate-200"
+              className={`w-16 h-16 rounded-lg overflow-hidden border relative ${
+                i === active ? "border-primary" : "border-border"
               }`}
             >
               <Image src={src} alt="" fill className="object-cover" />

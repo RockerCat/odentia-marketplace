@@ -22,40 +22,40 @@ export default async function AdminCategoriesPage({
       />
 
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Categorías</h1>
+        <h1 className="text-2xl font-bold text-foreground">Categorías</h1>
         <Link
           href="/admin/categorias/nueva"
-          className="bg-teal-700 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-teal-800"
+          className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90"
         >
           + Nueva categoría
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-background rounded-xl border border-border overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-slate-500 text-left">
+          <thead className="bg-surface text-muted-foreground text-left">
             <tr>
               <th className="px-5 py-3">Nombre</th>
               <th className="px-5 py-3">Productos</th>
               <th className="px-5 py-3"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-border">
             {categories.length === 0 && (
               <tr>
-                <td className="px-5 py-6 text-slate-400" colSpan={3}>
+                <td className="px-5 py-6 text-muted-foreground" colSpan={3}>
                   No hay categorías todavía.
                 </td>
               </tr>
             )}
             {categories.map((category) => (
-              <tr key={category.id} className="hover:bg-slate-50">
-                <td className="px-5 py-3 font-medium text-slate-900">{category.name}</td>
-                <td className="px-5 py-3 text-slate-500">{category._count.products}</td>
+              <tr key={category.id} className="hover:bg-foreground/5">
+                <td className="px-5 py-3 font-medium text-foreground">{category.name}</td>
+                <td className="px-5 py-3 text-muted-foreground">{category._count.products}</td>
                 <td className="px-5 py-3 text-right space-x-3">
                   <Link
                     href={`/admin/categorias/${category.id}/editar`}
-                    className="text-teal-700 hover:underline"
+                    className="text-primary hover:underline"
                   >
                     Editar
                   </Link>
@@ -63,7 +63,7 @@ export default async function AdminCategoriesPage({
                     <input type="hidden" name="id" value={category.id} />
                     <ConfirmSubmitButton
                       confirmMessage="¿Eliminar esta categoría?"
-                      className="text-red-500 hover:underline"
+                      className="text-danger hover:underline"
                     >
                       Eliminar
                     </ConfirmSubmitButton>

@@ -28,7 +28,7 @@ export default async function AdminOrderDetailPage({
 
   return (
     <div>
-      <Link href="/admin" className="text-sm text-teal-700 hover:underline">
+      <Link href="/admin" className="text-sm text-primary hover:underline">
         &larr; Volver a pedidos
       </Link>
 
@@ -40,57 +40,57 @@ export default async function AdminOrderDetailPage({
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        <div className="flex-1 bg-white rounded-xl border border-slate-200 p-6">
-          <h1 className="text-xl font-bold text-slate-900 mb-4">
+        <div className="flex-1 bg-background rounded-xl border border-border p-6">
+          <h1 className="text-xl font-bold text-foreground mb-4">
             Pedido #{order.id.slice(-8)}
           </h1>
 
           <dl className="grid grid-cols-2 gap-4 text-sm mb-6">
             <div>
-              <dt className="text-slate-400">Cliente</dt>
+              <dt className="text-label-foreground">Cliente</dt>
               <dd className="font-medium">{order.customerName}</dd>
             </div>
             <div>
-              <dt className="text-slate-400">Correo</dt>
+              <dt className="text-label-foreground">Correo</dt>
               <dd className="font-medium">{order.customerEmail}</dd>
             </div>
             <div>
-              <dt className="text-slate-400">Teléfono</dt>
+              <dt className="text-label-foreground">Teléfono</dt>
               <dd className="font-medium">{order.customerPhone}</dd>
             </div>
             <div>
-              <dt className="text-slate-400">Fecha</dt>
+              <dt className="text-label-foreground">Fecha</dt>
               <dd className="font-medium">
                 {order.createdAt.toLocaleString("es")}
               </dd>
             </div>
             <div className="col-span-2">
-              <dt className="text-slate-400">Dirección</dt>
+              <dt className="text-label-foreground">Dirección</dt>
               <dd className="font-medium">{order.address}</dd>
             </div>
             {order.notes && (
               <div className="col-span-2">
-                <dt className="text-slate-400">Notas</dt>
+                <dt className="text-label-foreground">Notas</dt>
                 <dd className="font-medium">{order.notes}</dd>
               </div>
             )}
           </dl>
 
           <table className="w-full text-sm mb-4">
-            <thead className="text-left text-slate-400">
+            <thead className="text-left text-muted-foreground">
               <tr>
                 <th className="py-2">Producto</th>
                 <th className="py-2">Cant.</th>
                 <th className="py-2 text-right">Subtotal</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-border">
               {order.items.map((item) => (
                 <tr key={item.id}>
                   <td className="py-2">
                     {item.productName}
                     {item.optionLabel && (
-                      <span className="text-slate-400"> ({item.optionLabel})</span>
+                      <span className="text-muted-foreground"> ({item.optionLabel})</span>
                     )}
                   </td>
                   <td className="py-2">{item.quantity}</td>
@@ -102,20 +102,20 @@ export default async function AdminOrderDetailPage({
             </tbody>
           </table>
 
-          <div className="flex justify-between font-bold text-slate-900 border-t border-slate-100 pt-4">
+          <div className="flex justify-between font-bold text-foreground border-t border-border pt-4">
             <span>Total</span>
             <span>{formatPrice(order.totalCents)}</span>
           </div>
         </div>
 
-        <div className="lg:w-72 shrink-0 bg-white rounded-xl border border-slate-200 p-6 h-fit">
-          <h2 className="font-semibold text-slate-900 mb-4">Estado del pedido</h2>
+        <div className="lg:w-72 shrink-0 bg-background rounded-xl border border-border p-6 h-fit">
+          <h2 className="font-semibold text-foreground mb-4">Estado del pedido</h2>
           <form action={updateOrderStatusAction} className="space-y-3">
             <input type="hidden" name="orderId" value={order.id} />
             <select
               name="status"
               defaultValue={order.status}
-              className="w-full rounded-md border-slate-300 text-sm"
+              className="w-full text-sm"
             >
               {STATUS_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -125,7 +125,7 @@ export default async function AdminOrderDetailPage({
             </select>
             <button
               type="submit"
-              className="w-full bg-teal-700 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-teal-800"
+              className="w-full bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90"
             >
               Actualizar estado
             </button>

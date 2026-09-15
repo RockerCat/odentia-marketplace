@@ -9,13 +9,13 @@ export default function LoginForm() {
   return (
     <form action={action} className="space-y-4">
       {state?.error && (
-        <div className="rounded-md bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm">
+        <div className="rounded-lg bg-danger/10 border border-danger/30 text-danger px-4 py-3 text-sm">
           {state.error}
         </div>
       )}
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
+        <label htmlFor="email" className="block text-sm font-medium text-foreground/80 mb-1">
           Correo electrónico
         </label>
         <input
@@ -23,21 +23,21 @@ export default function LoginForm() {
           id="email"
           name="email"
           autoFocus
-          className="w-full rounded-md border-slate-300"
+          className="w-full"
         />
       </div>
 
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">
+        <label htmlFor="password" className="block text-sm font-medium text-foreground/80 mb-1">
           Contraseña
         </label>
-        <input type="password" id="password" name="password" className="w-full rounded-md border-slate-300" />
+        <input type="password" id="password" name="password" className="w-full" />
       </div>
 
       <button
         type="submit"
         disabled={pending}
-        className="w-full bg-teal-700 text-white px-4 py-2.5 rounded-md font-medium hover:bg-teal-800 disabled:opacity-60"
+        className="w-full bg-primary text-primary-foreground px-4 py-2.5 rounded-lg font-medium hover:opacity-90 disabled:opacity-60"
       >
         {pending ? "Ingresando…" : "Ingresar"}
       </button>

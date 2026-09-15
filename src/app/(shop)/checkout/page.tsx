@@ -14,26 +14,26 @@ export default async function CheckoutPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-slate-900 mb-8">Finalizar pedido</h1>
+      <h1 className="text-3xl font-bold text-foreground mb-8">Finalizar pedido</h1>
 
       <div className="flex flex-col lg:flex-row gap-8">
         <CheckoutForm />
 
-        <aside className="lg:w-80 shrink-0 bg-white rounded-xl border border-slate-200 p-6 h-fit">
-          <h2 className="font-semibold text-slate-900 mb-4">Resumen</h2>
+        <aside className="lg:w-80 shrink-0 bg-background rounded-xl border border-border p-6 h-fit">
+          <h2 className="font-semibold text-foreground mb-4">Resumen</h2>
           <ul className="space-y-3 text-sm mb-4">
             {items.map((item) => (
               <li key={item.product.id} className="flex justify-between">
-                <span className="text-slate-600">
+                <span className="text-muted-foreground">
                   {item.product.name} &times; {item.quantity}
                 </span>
-                <span className="font-medium text-slate-900">
+                <span className="font-medium text-foreground">
                   {formatPrice(item.subtotalCents)}
                 </span>
               </li>
             ))}
           </ul>
-          <div className="border-t border-slate-100 pt-4 flex justify-between font-bold text-slate-900">
+          <div className="border-t border-border pt-4 flex justify-between font-bold text-foreground">
             <span>Total</span>
             <span>{formatPrice(total)}</span>
           </div>

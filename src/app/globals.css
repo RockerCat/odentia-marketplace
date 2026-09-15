@@ -70,13 +70,34 @@ h4 {
   letter-spacing: -0.01em;
 }
 
+/* Shared control primitive — Marketplace styles inputs/selects/textareas
+   from this one global rule rather than repeating classes per field (as
+   Core does inline per-input); border/radius/focus here are the values
+   that make that primitive match Core's own input pattern
+   (rounded-lg border border-border ... focus:border-primary). Per-field
+   classes now only carry width/sizing, not border/radius. */
 input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
 select,
 textarea {
   padding: 10px;
-  background-color: #fff;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
   border-width: 1px;
   border-style: solid;
+  border-color: var(--color-border);
+  border-radius: 0.5rem;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"])::placeholder,
+textarea::placeholder {
+  color: var(--color-muted-foreground);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
 }
 
 /* Mobile browsers (iOS Safari, Chrome on Android, etc.) auto-zoom the

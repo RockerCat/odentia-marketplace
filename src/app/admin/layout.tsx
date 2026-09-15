@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { verifySession } from "@/lib/dal";
 import { logoutAction } from "./actions";
@@ -8,22 +9,37 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
 
   return (
     <div className="flex min-h-screen">
-      <aside className="w-56 shrink-0 bg-slate-900 text-slate-300 flex flex-col">
-        <div className="p-5 text-lg font-bold text-white">Odentia Admin</div>
+      <aside className="w-56 shrink-0 bg-background border-r border-border flex flex-col">
+        <div className="flex items-center justify-center border-b border-border px-4 py-8">
+          <Image
+            src="/branding/odentia.png"
+            alt="Odentia"
+            width={124}
+            height={37}
+            priority
+            className="h-8 w-auto"
+          />
+        </div>
         <AdminNav />
-        <div className="p-3 border-t border-slate-800">
-          <Link href="/" className="block px-3 py-2 text-sm hover:text-white">
+        <div className="p-3 border-t border-border space-y-1">
+          <Link
+            href="/"
+            className="block rounded-lg px-3 py-2 text-sm text-foreground/80 hover:bg-foreground/5"
+          >
             Ver tienda
           </Link>
           <form action={logoutAction}>
-            <button type="submit" className="w-full text-left px-3 py-2 text-sm hover:text-white">
+            <button
+              type="submit"
+              className="w-full rounded-lg text-left px-3 py-2 text-sm text-foreground/80 hover:bg-foreground/5"
+            >
               Cerrar sesión
             </button>
           </form>
         </div>
       </aside>
 
-      <main className="flex-1 p-8 bg-slate-50">{children}</main>
+      <main className="flex-1 p-8 bg-surface">{children}</main>
     </div>
   );
 }

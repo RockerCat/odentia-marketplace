@@ -7,7 +7,7 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
 
   return (
     <>
-      <header className="sticky top-0 z-20 bg-white border-b border-slate-200">
+      <header className="sticky top-0 z-20 bg-background border-b border-border">
         <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <a href="https://odentia-core.vercel.app/agenda">
@@ -20,7 +20,7 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
                 className="h-6 sm:h-8 w-auto shrink-0"
               />
             </a>
-            <span className="h-5 sm:h-6 w-px bg-slate-200 shrink-0" />
+            <span className="h-5 sm:h-6 w-px bg-border shrink-0" />
             <Link href="/">
               <Image
                 src="/branding/lopadent.png"
@@ -38,7 +38,7 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
             <Link href="/carrito" className="hover:text-teal-700">
               Carrito
               {cartCount > 0 && (
-                <span className="ml-1 inline-flex items-center justify-center rounded-full bg-teal-700 text-white text-xs w-5 h-5">
+                <span className="ml-1 inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs w-5 h-5">
                   {cartCount}
                 </span>
               )}
@@ -51,7 +51,7 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
         {children}
       </main>
 
-      <footer className="max-w-6xl mx-auto px-4 py-8 text-sm text-slate-400">
+      <footer className="max-w-6xl mx-auto px-4 py-8 text-sm text-muted-foreground">
         &copy; {new Date().getFullYear()} Odentia — Implementos
         odontológicos.
       </footer>

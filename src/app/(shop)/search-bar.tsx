@@ -62,13 +62,13 @@ export default function SearchBar({
         value={value}
         onChange={handleChange}
         placeholder="Buscar productos…"
-        className="flex-1 rounded-md border-slate-300 max-w-md"
+        className="flex-1 max-w-md"
       />
       {value && (
         <button
           type="button"
           onClick={handleClear}
-          className="text-sm text-slate-400 hover:text-teal-700 self-center"
+          className="text-sm text-muted-foreground hover:text-primary self-center"
         >
           Limpiar
         </button>

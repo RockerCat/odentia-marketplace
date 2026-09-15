@@ -11,8 +11,8 @@ export default function FlashMessage({
     <div
       className={`mb-6 rounded-lg border px-4 py-3 text-sm ${
         success
-          ? "bg-teal-50 border-teal-200 text-teal-800"
-          : "bg-red-50 border-red-200 text-red-700"
+          ? "bg-success/10 border-success/30 text-success"
+          : "bg-danger/10 border-danger/30 text-danger"
       }`}
     >
       {success ?? error}

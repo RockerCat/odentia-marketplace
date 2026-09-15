@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { addProductImageAction } from "../../actions";
 
 const FILE_INPUT_CLASS =
-  "block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-teal-700 file:text-white file:font-medium file:cursor-pointer hover:file:bg-teal-800";
+  "block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary file:text-primary-foreground file:font-medium file:cursor-pointer hover:file:opacity-90";
 
 export default function QuickImageUpload({ productId }: { productId: string }) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -13,10 +13,10 @@ export default function QuickImageUpload({ productId }: { productId: string }) {
     <form
       ref={formRef}
       action={addProductImageAction}
-      className="bg-white rounded-xl border border-slate-200 p-4"
+      className="bg-background rounded-xl border border-border p-4"
     >
       <input type="hidden" name="productId" value={productId} />
-      <label htmlFor="images" className="block text-sm font-medium text-slate-700 mb-1">
+      <label htmlFor="images" className="block text-sm font-medium text-foreground/80 mb-1">
         Agregar imágenes
       </label>
       <input
@@ -32,7 +32,7 @@ export default function QuickImageUpload({ productId }: { productId: string }) {
           }
         }}
       />
-      <p className="text-xs text-slate-400 mt-1">
+      <p className="text-xs text-muted-foreground mt-1">
         Se guardan automáticamente al elegirlas (JPG, PNG o WebP — máx. 5MB c/u).
       </p>
     </form>

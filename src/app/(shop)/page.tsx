@@ -78,17 +78,17 @@ export default async function CatalogPage({
 
       <div className="flex flex-col md:flex-row gap-6 md:gap-8">
         <aside className="md:w-48 md:shrink-0">
-          <h2 className="text-sm font-semibold text-slate-500 uppercase mb-3">
+          <h2 className="text-sm font-semibold text-label-foreground uppercase mb-3">
             Categorías
           </h2>
           <ul className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 md:mx-0 md:px-0 md:pb-0 md:flex-col md:gap-1 md:overflow-visible text-sm">
             <li className="shrink-0">
               <Link
                 href={query ? `/?q=${encodeURIComponent(query)}` : "/"}
-                className={`block px-3 py-2 rounded-full md:rounded-md whitespace-nowrap ${
+                className={`block px-3 py-2 rounded-full md:rounded-lg whitespace-nowrap ${
                   !activeCategory
-                    ? "bg-teal-700 text-white"
-                    : "bg-slate-100 md:bg-transparent hover:bg-slate-200 md:hover:bg-slate-100"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-surface md:bg-transparent hover:bg-border md:hover:bg-surface"
                 }`}
               >
                 Todas
@@ -98,10 +98,10 @@ export default async function CatalogPage({
               <li key={cat.id} className="shrink-0">
                 <Link
                   href={`/?category=${cat.slug}${query ? `&q=${encodeURIComponent(query)}` : ""}`}
-                  className={`block px-3 py-2 rounded-full md:rounded-md whitespace-nowrap ${
+                  className={`block px-3 py-2 rounded-full md:rounded-lg whitespace-nowrap ${
                     activeCategory === cat.slug
-                      ? "bg-teal-700 text-white"
-                      : "bg-slate-100 md:bg-transparent hover:bg-slate-200 md:hover:bg-slate-100"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-surface md:bg-transparent hover:bg-border md:hover:bg-surface"
                   }`}
                 >
                   {cat.name}
@@ -114,7 +114,7 @@ export default async function CatalogPage({
         <div className="flex-1 min-w-0">
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {products.length === 0 && (
-              <p className="text-slate-500 col-span-full">
+              <p className="text-muted-foreground col-span-full">
                 {query
                   ? `No encontramos productos para "${query}".`
                   : "No hay productos en esta categoría."}
@@ -125,9 +125,9 @@ export default async function CatalogPage({
               <Link
                 key={product.id}
                 href={`/productos/${product.slug}`}
-                className="block bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-md transition"
+                className="block bg-background rounded-xl border border-border overflow-hidden hover:shadow-md transition"
               >
-                <div className="aspect-square bg-slate-100 flex items-center justify-center relative">
+                <div className="aspect-square bg-surface flex items-center justify-center relative">
                   {product.images[0] ? (
                     <Image
                       src={getProductImageUrl(product.images[0].path)}
@@ -136,20 +136,20 @@ export default async function CatalogPage({
                       className="object-cover"
                     />
                   ) : (
-                    <span className="text-slate-300 text-sm">Sin imagen</span>
+                    <span className="text-muted-foreground text-sm">Sin imagen</span>
                   )}
                 </div>
                 <div className="p-5">
-                  <p className="text-xs uppercase tracking-wide text-teal-700 font-semibold mb-1">
+                  <p className="text-xs uppercase tracking-wide text-primary font-semibold mb-1">
                     {product.category.name}
                   </p>
-                  <h3 className="font-semibold text-slate-900 mb-2">
+                  <h3 className="text-sm font-semibold leading-snug text-foreground mb-2">
                     {product.name}
                   </h3>
-                  <p className="text-lg font-bold text-slate-900">
+                  <p className="text-lg font-bold text-foreground">
                     {formatPrice(product.priceCents)}
                   </p>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     {product.stock} disponibles
                   </p>
                 </div>
@@ -162,29 +162,29 @@ export default async function CatalogPage({
               {currentPage > 1 ? (
                 <Link
                   href={pageHref(currentPage - 1)}
-                  className="px-4 py-2 rounded-md text-sm font-medium border border-slate-300 bg-white hover:bg-slate-50"
+                  className="px-4 py-2 rounded-lg text-sm font-medium border border-border bg-background hover:bg-foreground/5"
                 >
                   &larr; Anterior
                 </Link>
               ) : (
-                <span className="px-4 py-2 rounded-md text-sm font-medium border border-slate-200 text-slate-300">
+                <span className="px-4 py-2 rounded-lg text-sm font-medium border border-border text-muted-foreground">
                   &larr; Anterior
                 </span>
               )}
 
-              <span className="text-sm text-slate-500">
+              <span className="text-sm text-muted-foreground">
                 Página {currentPage} de {totalPages}
               </span>
 
               {currentPage < totalPages ? (
                 <Link
                   href={pageHref(currentPage + 1)}
-                  className="px-4 py-2 rounded-md text-sm font-medium border border-slate-300 bg-white hover:bg-slate-50"
+                  className="px-4 py-2 rounded-lg text-sm font-medium border border-border bg-background hover:bg-foreground/5"
                 >
                   Siguiente &rarr;
                 </Link>
               ) : (
-                <span className="px-4 py-2 rounded-md text-sm font-medium border border-slate-200 text-slate-300">
+                <span className="px-4 py-2 rounded-lg text-sm font-medium border border-border text-muted-foreground">
                   Siguiente &rarr;
                 </span>
               )}
