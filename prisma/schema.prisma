@@ -77,6 +77,17 @@ model Order {
   // Postgres, not application logic, is the source of truth for "already
   // processed this attempt".
   idempotencyKey  String?     @unique
+  // SHA-256 hash of a random per-order access token (see src/lib/order-
+  // access.ts) — proves possession of the guest confirmation page
+  // (/pedido/[id]/gracias) without a customer account, which doesn't exist
+  // yet. The order's cuid alone is not authorization: it's a database
+  // identifier, not a secret. Only the hash is ever persisted, never the
+  // raw token. Nullable so historical orders created before this existed
+  // stay valid rows — such an order simply has no verifier and is treated
+  // as not publicly readable by ID alone (see the thank-you page's own
+  // check); admins still reach it through the admin order routes, which
+  // don't use this token at all.
+  accessTokenHash String?     @unique
 }
 
 model OrderItem {

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCartItems, clearCart } from "@/lib/cart";
+import { generateOrderAccessToken, grantOrderAccess, hashOrderAccessToken } from "@/lib/order-access";
 
 const CheckoutSchema = z.object({
   customerName: z.string().min(1, "El nombre es obligatorio."),
@@ -45,6 +46,22 @@ async function redirectToExistingOrder(orderId: string): Promise<never> {
   // request, or by whichever concurrent request won the race) — bring the
   // caller to the exact same result a fresh success would have produced.
   // Safe to call even if the winning request already cleared it.
+  //
+  // Re-issues a fresh access token/cookie for the order rather than trying
+  // to recover whatever token the original request may have issued (which
+  // is impossible — only its hash is stored, never the raw value, and that
+  // original response may never have reached the browser at all, which is
+  // exactly the case a retry exists to cover). Reaching this function at
+  // all already required presenting the correct idempotencyKey, so
+  // re-granting access here is granting it to the same legitimate browser,
+  // not to a new party — see src/lib/order-access.ts.
+  const token = generateOrderAccessToken();
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { accessTokenHash: hashOrderAccessToken(token) },
+  });
+  await grantOrderAccess(orderId, token);
+
   await clearCart();
   redirect(`/pedido/${orderId}/gracias`);
 }
@@ -102,6 +119,7 @@ export async function placeOrderAction(
   }
 
   const totalCents = items.reduce((sum, item) => sum + item.subtotalCents, 0);
+  const accessToken = generateOrderAccessToken();
 
   let order;
   try {
@@ -127,6 +145,7 @@ export async function placeOrderAction(
         data: {
           ...parsed.data,
           idempotencyKey,
+          accessTokenHash: hashOrderAccessToken(accessToken),
           totalCents,
           status: "PENDIENTE_PAGO",
           items: {
@@ -168,6 +187,7 @@ export async function placeOrderAction(
     throw err;
   }
 
+  await grantOrderAccess(order.id, accessToken);
   await clearCart();
 
   redirect(`/pedido/${order.id}/gracias`);

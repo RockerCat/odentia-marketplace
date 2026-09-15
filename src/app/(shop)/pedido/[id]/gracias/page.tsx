@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/format";
+import { verifyOrderAccess } from "@/lib/order-access";
 
 const STATUS_LABELS: Record<string, string> = {
   PENDIENTE_PAGO: "pendiente de pago",
@@ -20,7 +21,14 @@ export default async function OrderConfirmationPage({
     include: { items: true },
   });
 
-  if (!order) notFound();
+  // The order's id alone is not authorization — it's a database identifier,
+  // not a secret. "not found", "no access cookie" and "wrong/stale cookie"
+  // (including a legacy order with no accessTokenHash at all) all fall
+  // through to the exact same notFound(), before any order field is ever
+  // touched below, so none of them is distinguishable from the outside.
+  if (!order || !(await verifyOrderAccess(id, order.accessTokenHash))) {
+    notFound();
+  }
 
   return (
     <div className="max-w-xl mx-auto text-center bg-white rounded-xl border border-slate-200 p-10">
