@@ -1,6 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getCartCount } from "@/lib/cart";
+import { getCustomerSession } from "@/lib/customer-session";
+
+// Canonical Core destinations for a guest customer — Core remains the only
+// authority for authentication/registration; Marketplace never implements
+// its own customer login/signup. No `return_to`/`next` param: Core doesn't
+// support an automatic post-login return into Marketplace yet (see the
+// Marketplace header/customer identity audit) — that's explicitly out of
+// scope here, not an oversight.
+const CORE_LOGIN_URL = "https://www.odentia.co/login";
+const CORE_REGISTER_URL = "https://www.odentia.co/registro";
 
 // Same SVG geometry/stroke language as the ShoppingCartIcon already
 // approved in odentia-core's src/components/shell/icons.tsx — replicated
@@ -28,7 +38,17 @@ function ShoppingCartIcon({ className }: { className?: string }) {
 }
 
 export default async function ShopLayout({ children }: LayoutProps<"/">) {
-  const cartCount = await getCartCount();
+  // Independent reads — resolved in parallel rather than a sequential
+  // waterfall. getCustomerSession() already returns null for a
+  // missing/expired/invalid odentia_customer_session (see src/lib/
+  // customer-session.ts); no additional handling is needed for that here.
+  const [cartCount, customer] = await Promise.all([getCartCount(), getCustomerSession()]);
+
+  // Same derivation Core's own authenticated header uses (see
+  // use-shell-identity.ts): "firstName lastName" trimmed, and initials as
+  // the first letter of each, uppercased.
+  const displayName = customer ? `${customer.firstName} ${customer.lastName}`.trim() : null;
+  const initials = customer ? `${customer.firstName[0] ?? ""}${customer.lastName[0] ?? ""}`.toUpperCase() : null;
 
   return (
     <>
@@ -60,6 +80,31 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
             <Link href="/" className="hidden sm:inline hover:text-teal-700">
               Catálogo
             </Link>
+
+            {customer ? (
+              <div className="flex items-center gap-2">
+                <span
+                  aria-hidden="true"
+                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
+                >
+                  {initials}
+                </span>
+                <span className="hidden sm:block text-left leading-tight">
+                  <span className="block text-foreground">{displayName}</span>
+                  <span className="block text-xs text-muted-foreground">{customer.clinicName}</span>
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 sm:gap-4">
+                <a href={CORE_LOGIN_URL} className="hover:text-teal-700">
+                  Iniciar sesión
+                </a>
+                <a href={CORE_REGISTER_URL} className="hidden sm:inline hover:text-teal-700">
+                  Registra tu clínica
+                </a>
+              </div>
+            )}
+
             <Link
               href="/carrito"
               aria-label={cartCount > 0 ? `Carrito, ${cartCount} producto${cartCount === 1 ? "" : "s"}` : "Carrito"}
