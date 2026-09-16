@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getCartCount } from "@/lib/cart";
 import { getCustomerSession } from "@/lib/customer-session";
+import { CustomerIdentityMenu } from "./customer-identity-menu";
 
 // Canonical Core destinations for a guest customer — Core remains the only
 // authority for authentication/registration; Marketplace never implements
@@ -44,12 +45,6 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
   // customer-session.ts); no additional handling is needed for that here.
   const [cartCount, customer] = await Promise.all([getCartCount(), getCustomerSession()]);
 
-  // Same derivation Core's own authenticated header uses (see
-  // use-shell-identity.ts): "firstName lastName" trimmed, and initials as
-  // the first letter of each, uppercased.
-  const displayName = customer ? `${customer.firstName} ${customer.lastName}`.trim() : null;
-  const initials = customer ? `${customer.firstName[0] ?? ""}${customer.lastName[0] ?? ""}`.toUpperCase() : null;
-
   return (
     <>
       <header className="sticky top-0 z-20 bg-background border-b border-border">
@@ -81,30 +76,6 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
               Catálogo
             </Link>
 
-            {customer ? (
-              <div className="flex items-center gap-2">
-                <span
-                  aria-hidden="true"
-                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground"
-                >
-                  {initials}
-                </span>
-                <span className="hidden sm:block text-left leading-tight">
-                  <span className="block text-foreground">{displayName}</span>
-                  <span className="block text-xs text-muted-foreground">{customer.clinicName}</span>
-                </span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3 sm:gap-4">
-                <a href={CORE_LOGIN_URL} className="hover:text-teal-700">
-                  Iniciar sesión
-                </a>
-                <a href={CORE_REGISTER_URL} className="hidden sm:inline hover:text-teal-700">
-                  Registra tu clínica
-                </a>
-              </div>
-            )}
-
             <Link
               href="/carrito"
               aria-label={cartCount > 0 ? `Carrito, ${cartCount} producto${cartCount === 1 ? "" : "s"}` : "Carrito"}
@@ -117,6 +88,29 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
                 </span>
               )}
             </Link>
+
+            {customer ? (
+              <CustomerIdentityMenu
+                firstName={customer.firstName}
+                lastName={customer.lastName}
+                clinicName={customer.clinicName}
+              />
+            ) : (
+              <div className="flex items-center gap-1.5 sm:gap-3">
+                <a
+                  href={CORE_LOGIN_URL}
+                  className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-foreground/5 sm:border sm:border-border sm:px-4 sm:py-2 sm:text-sm"
+                >
+                  Iniciar sesión
+                </a>
+                <a
+                  href={CORE_REGISTER_URL}
+                  className="hidden rounded-lg bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 sm:inline-block sm:px-4 sm:py-2 sm:text-sm"
+                >
+                  Registra tu clínica
+                </a>
+              </div>
+            )}
           </nav>
         </div>
       </header>
