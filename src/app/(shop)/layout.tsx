@@ -50,7 +50,7 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
       <header className="sticky top-0 z-20 bg-background border-b border-border">
         <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <a href="https://odentia-core.vercel.app/agenda">
+            <Link href="/">
               <Image
                 src="/branding/odentia.png"
                 alt="Odentia"
@@ -59,7 +59,7 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
                 priority
                 className="h-6 sm:h-8 w-auto shrink-0"
               />
-            </a>
+            </Link>
             <span className="h-5 sm:h-6 w-px bg-border shrink-0" />
             <Link href="/">
               <Image
