@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { logoutCustomerSession } from "./customer-logout-action";
 
 type CustomerIdentityMenuProps = {
   firstName: string;
@@ -38,17 +39,20 @@ function ChevronDownIcon({ className }: { className?: string }) {
 // interaction parity — a small local Client Component, not shared code,
 // since Core and Marketplace are separate repos.
 //
-// Only ONE menu action exists here on purpose, not because this is
-// unfinished: Core has no single valid "Perfil" destination for every
-// customer role (a dentist gets a real route, a plain clinic_admin or an
-// assistant get a client-side modal that only exists inside Core's own app
-// shell — there is nothing Marketplace could correctly link to), and
-// Core's logout is client-side Supabase logic with no cross-app-safe
-// endpoint Marketplace could invoke yet (clearing only
-// odentia_customer_session would be a false "logged out" state — Core
-// would still be authenticated, and the very next SSO round trip would
-// silently restore it). Inventing either here would be wrong, not just
-// incomplete — see the Marketplace header/customer identity audit.
+// Deliberately no "Perfil": Core has no single valid profile destination
+// for every customer role (a dentist gets a real route, a plain
+// clinic_admin or an assistant get a client-side modal that only exists
+// inside Core's own app shell — there is nothing Marketplace could
+// correctly link to). Inventing one would be wrong, not just incomplete —
+// see the Marketplace header/customer identity audit.
+//
+// "Salir" (see logoutCustomerSession, customer-logout-action.ts) is real
+// coordinated logout, not just a local cookie clear: it ends Marketplace's
+// own odentia_customer_session AND hands off to Core's own /auth/logout to
+// end the real Supabase session too (see the coordinated-logout audit) —
+// clearing only the Marketplace side would leave Core still authenticated,
+// and the very next SSO round trip would silently restore this exact
+// session.
 export function CustomerIdentityMenu({ firstName, lastName, clinicName }: CustomerIdentityMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -108,6 +112,18 @@ export function CustomerIdentityMenu({ firstName, lastName, clinicName }: Custom
             >
               Volver a Odentia
             </a>
+            <div className="my-1 border-t border-border" />
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setMenuOpen(false);
+                void logoutCustomerSession();
+              }}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-danger hover:bg-danger/5"
+            >
+              Salir
+            </button>
           </div>
         </>
       )}
