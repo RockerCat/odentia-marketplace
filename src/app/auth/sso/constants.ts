@@ -10,7 +10,18 @@ export const CALLBACK_PATH = "/auth/sso/callback";
 export const STATE_COOKIE_TTL_SECONDS = 5 * 60;
 export const EXCHANGE_TIMEOUT_MS = 8000;
 
-// Fixed, safe landing spot for every outcome of this flow — success and
-// every failure path alike. No `next=`/return-URL parameter exists yet, so
-// there is nothing here an open redirect could ever be built from.
+// Fixed, safe landing spot for every failure path, and for a successful
+// login with no (or an invalid/expired) return-to intent. Never built from
+// request input — always this literal.
 export const SAFE_REDIRECT_PATH = "/";
+
+// Checkpoint B: a second, Marketplace-owned cookie that carries ONLY a
+// return-to intent through the SSO round trip — completely separate from
+// STATE_COOKIE_NAME (the anti-CSRF nonce) and never involved in validating
+// state/code/identity. Mirrors the state cookie's exact lifecycle
+// (same CALLBACK_PATH, same TTL, single-use) on purpose: same security
+// posture, same set of concerns already reasoned about for that cookie.
+// V1 supports exactly one destination — deliberately a single literal, not
+// an extensible allowlist, since nothing else is needed yet.
+export const RETURN_TO_COOKIE_NAME = "odentia_sso_return_to";
+export const CART_RETURN_TO_PATH = "/carrito";

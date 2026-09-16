@@ -2,7 +2,14 @@ import "server-only";
 import { randomBytes } from "crypto";
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
-import { CALLBACK_PATH, SAFE_REDIRECT_PATH, STATE_COOKIE_NAME, STATE_COOKIE_TTL_SECONDS } from "../constants";
+import {
+  CALLBACK_PATH,
+  CART_RETURN_TO_PATH,
+  RETURN_TO_COOKIE_NAME,
+  SAFE_REDIRECT_PATH,
+  STATE_COOKIE_NAME,
+  STATE_COOKIE_TTL_SECONDS,
+} from "../constants";
 
 // Starts the Core -> Marketplace SSO handshake: mints a random anti-CSRF
 // `state`, stores it in a short-lived cookie scoped to the callback path
@@ -32,15 +39,35 @@ export async function GET(request: NextRequest) {
   // 32 bytes of crypto-random entropy, URL-safe, never derived from
   // email/user/clinic/time — a plain opaque anti-CSRF nonce.
   const state = randomBytes(32).toString("base64url");
+  const isSecure = process.env.NODE_ENV === "production";
 
   const cookieStore = await cookies();
   cookieStore.set(STATE_COOKIE_NAME, state, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isSecure,
     sameSite: "lax",
     path: CALLBACK_PATH,
     maxAge: STATE_COOKIE_TTL_SECONDS,
   });
+
+  // Checkpoint B: an optional, Marketplace-owned return-to intent — never
+  // sent to Core, never part of `redirect_uri`/`state`. V1 accepts exactly
+  // one literal value; anything else (missing, a different path, an
+  // absolute/protocol-relative URL, a prefix match, an encoded
+  // approximation) is treated as "no intent" and explicitly clears any
+  // stale cookie from an earlier attempt, so a leftover `/carrito` intent
+  // can never leak into a later, generic SSO start that didn't ask for it.
+  if (request.nextUrl.searchParams.get("return_to") === CART_RETURN_TO_PATH) {
+    cookieStore.set(RETURN_TO_COOKIE_NAME, CART_RETURN_TO_PATH, {
+      httpOnly: true,
+      secure: isSecure,
+      sameSite: "lax",
+      path: CALLBACK_PATH,
+      maxAge: STATE_COOKIE_TTL_SECONDS,
+    });
+  } else {
+    cookieStore.delete({ name: RETURN_TO_COOKIE_NAME, path: CALLBACK_PATH });
+  }
 
   target.searchParams.set("state", state);
   // Marketplace's OWN canonical callback URL, built from server-side

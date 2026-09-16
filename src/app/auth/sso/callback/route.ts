@@ -3,7 +3,14 @@ import { timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 import { createCustomerSession, isCustomerIdentity, type CustomerIdentity } from "@/lib/customer-session";
-import { CALLBACK_PATH, EXCHANGE_TIMEOUT_MS, SAFE_REDIRECT_PATH, STATE_COOKIE_NAME } from "../constants";
+import {
+  CALLBACK_PATH,
+  CART_RETURN_TO_PATH,
+  EXCHANGE_TIMEOUT_MS,
+  RETURN_TO_COOKIE_NAME,
+  SAFE_REDIRECT_PATH,
+  STATE_COOKIE_NAME,
+} from "../constants";
 
 function safeEqual(a: string, b: string): boolean {
   const bufA = Buffer.from(a);
@@ -49,11 +56,19 @@ function failClosed(request: NextRequest): NextResponse {
 export async function GET(request: NextRequest) {
   const cookieStore = await cookies();
   const presentedState = cookieStore.get(STATE_COOKIE_NAME)?.value;
+  // Checkpoint B: read alongside state, but this value never participates
+  // in any check below — it can only ever affect the final redirect AFTER
+  // a fully successful SSO. Treated as untrusted browser input regardless
+  // of the fact that Marketplace itself originally wrote it: it must be
+  // re-validated against the exact same literal at the point of use.
+  const presentedReturnTo = cookieStore.get(RETURN_TO_COOKIE_NAME)?.value;
 
-  // Consumed unconditionally on the very first callback request — a
+  // Both consumed unconditionally on the very first callback request — a
   // replayed callback, whether it repeats the same state or not, must
-  // never be able to succeed twice.
+  // never be able to succeed twice, and a stale return-to intent must
+  // never survive to affect a later, unrelated attempt.
   cookieStore.delete({ name: STATE_COOKIE_NAME, path: CALLBACK_PATH });
+  cookieStore.delete({ name: RETURN_TO_COOKIE_NAME, path: CALLBACK_PATH });
 
   const code = request.nextUrl.searchParams.get("code");
   const state = request.nextUrl.searchParams.get("state");
@@ -110,5 +125,11 @@ export async function GET(request: NextRequest) {
     return failClosed(request);
   }
 
-  return NextResponse.redirect(new URL(SAFE_REDIRECT_PATH, request.url));
+  // Only reached after state validation, exchange, payload validation, and
+  // session creation ALL succeeded. Literal re-comparison, not a prefix or
+  // path-parsing check — anything other than an exact match (missing,
+  // expired, tampered, or any other value) falls back to the same safe
+  // path every other outcome already uses.
+  const destination = presentedReturnTo === CART_RETURN_TO_PATH ? CART_RETURN_TO_PATH : SAFE_REDIRECT_PATH;
+  return NextResponse.redirect(new URL(destination, request.url));
 }
