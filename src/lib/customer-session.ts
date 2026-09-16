@@ -26,9 +26,11 @@ export type MembershipRole = (typeof ROLE_CATALOG)[number];
 // The identity Core certifies after a successful SSO exchange. Every field
 // here is either required by the SSO contract (coreUserId, clinicId) or an
 // approved-but-not-required-elsewhere claim (membershipId, role, name,
-// email) — nothing else is allowed onto this session: no PHI, no billing/
-// subscription data, no access token, no authorization code, no shared
-// secret.
+// email, clinicName) — nothing else is allowed onto this session: no PHI,
+// no billing/subscription data, no access token, no authorization code, no
+// shared secret. clinicName is a display-only field resolved by Core's own
+// consume_marketplace_sso_code() RPC (see 20260915130000 in odentia-core)
+// — never fetched from Core separately, never fabricated by Marketplace.
 export type CustomerIdentity = {
   coreUserId: string;
   clinicId: string;
@@ -37,6 +39,7 @@ export type CustomerIdentity = {
   firstName: string;
   lastName: string;
   email: string;
+  clinicName: string;
 };
 
 function getEncodedSecret(): Uint8Array {
@@ -70,7 +73,9 @@ export function isCustomerIdentity(payload: unknown): payload is CustomerIdentit
     typeof candidate.firstName === "string" &&
     typeof candidate.lastName === "string" &&
     typeof candidate.email === "string" &&
-    candidate.email.length > 0
+    candidate.email.length > 0 &&
+    typeof candidate.clinicName === "string" &&
+    candidate.clinicName.length > 0
   );
 }
 

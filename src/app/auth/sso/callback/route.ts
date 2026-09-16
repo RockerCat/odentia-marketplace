@@ -25,7 +25,7 @@ function safeEqual(a: string, b: string): boolean {
 // isCustomerIdentity only proves the required fields are PRESENT with the
 // right shape — it does not strip whatever extra fields Core's response
 // might also carry. This rebuild is what actually keeps anything beyond
-// the seven approved claims (PHI, billing, tokens, ...) out of the
+// the eight approved claims (PHI, billing, tokens, ...) out of the
 // customer session JWT, regardless of what Core's exchange happens to
 // return.
 function toApprovedIdentity(identity: CustomerIdentity): CustomerIdentity {
@@ -37,6 +37,7 @@ function toApprovedIdentity(identity: CustomerIdentity): CustomerIdentity {
     firstName: identity.firstName,
     lastName: identity.lastName,
     email: identity.email,
+    clinicName: identity.clinicName,
   };
 }
 
