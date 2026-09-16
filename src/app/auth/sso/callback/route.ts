@@ -23,21 +23,36 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 // isCustomerIdentity only proves the required fields are PRESENT with the
-// right shape — it does not strip whatever extra fields Core's response
-// might also carry. This rebuild is what actually keeps anything beyond
-// the eight approved claims (PHI, billing, tokens, ...) out of the
-// customer session JWT, regardless of what Core's exchange happens to
-// return.
+// right shape (and, per buyerType, that clinic-attribution fields are
+// exactly present or exactly absent) — it does not strip whatever extra
+// fields Core's response might also carry. This rebuild is what actually
+// keeps anything beyond the approved claims for each buyerType (PHI,
+// billing, tokens, ...) out of the customer session JWT, regardless of
+// what Core's exchange happens to return. Branching on identity.buyerType
+// (a real discriminated union, not a shared flat type) makes it
+// structurally impossible to attach a clinicId/membershipId/role/
+// clinicName to a patient identity here, even by accident.
 function toApprovedIdentity(identity: CustomerIdentity): CustomerIdentity {
+  if (identity.buyerType === "clinic_member") {
+    return {
+      buyerType: "clinic_member",
+      coreUserId: identity.coreUserId,
+      clinicId: identity.clinicId,
+      membershipId: identity.membershipId,
+      role: identity.role,
+      firstName: identity.firstName,
+      lastName: identity.lastName,
+      email: identity.email,
+      clinicName: identity.clinicName,
+    };
+  }
+
   return {
+    buyerType: "patient",
     coreUserId: identity.coreUserId,
-    clinicId: identity.clinicId,
-    membershipId: identity.membershipId,
-    role: identity.role,
     firstName: identity.firstName,
     lastName: identity.lastName,
     email: identity.email,
-    clinicName: identity.clinicName,
   };
 }
 

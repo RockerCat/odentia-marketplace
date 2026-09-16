@@ -22,32 +22,51 @@ const CORE_ROLE_LABELS: Record<string, string> = {
 
 type OrderOrigin =
   | { kind: "guest" }
-  | { kind: "core"; clinicId: string; roleLabel: string }
-  // Defensive only: the order_core_attribution_pair DB CHECK (see
-  // prisma/migrations/20260915120000_add_order_core_attribution) already
-  // makes this impossible for any order this app ever writes — this branch
-  // exists purely so the UI never guesses at an attribution from a single
-  // identifier if it ever encountered one (legacy/manual data), rather than
+  | { kind: "patient" }
+  | { kind: "clinic_member"; clinicId: string; roleLabel: string }
+  // Defensive only: the order_buyer_attribution_shape DB CHECK (see
+  // prisma/migrations/20260915150000_add_order_buyer_type) already makes
+  // this impossible for any order this app ever writes — this branch
+  // exists purely so the UI never guesses at an attribution from a partial
+  // shape if it ever encountered one (legacy/manual data), rather than
   // trusting it wasn't validated at write time.
   | { kind: "inconsistent" };
 
-// coreUserId/clinicId must be checked TOGETHER — never inferred from just
-// one of them being present. This is purely a display classification: it
-// never grants access, never triggers a lookup, and coreRole here is only
-// ever the snapshot taken at purchase time, not the person's role today.
+// Classifies against the exact three shapes order_buyer_attribution_shape
+// enforces — never inferred from a single field in isolation. This is
+// purely a display classification: it never grants access, never triggers
+// a lookup, and coreRole here is only ever the snapshot taken at purchase
+// time, not the person's role today. A patient order intentionally shows
+// no clinic — it never had one to show (see the buyer-identity/
+// clinic-attribution audit).
 function resolveOrderOrigin(order: {
   coreUserId: string | null;
+  buyerType: string | null;
   clinicId: string | null;
+  membershipId: string | null;
   coreRole: string | null;
 }): OrderOrigin {
-  const { coreUserId, clinicId, coreRole } = order;
+  const { coreUserId, buyerType, clinicId, membershipId, coreRole } = order;
 
-  if (coreUserId === null && clinicId === null) return { kind: "guest" };
-  if (coreUserId === null || clinicId === null) return { kind: "inconsistent" };
+  if (buyerType === null && coreUserId === null && clinicId === null && membershipId === null && coreRole === null) {
+    return { kind: "guest" };
+  }
 
-  const roleLabel = coreRole === null ? "No disponible" : (CORE_ROLE_LABELS[coreRole] ?? coreRole);
+  if (buyerType === "patient" && coreUserId !== null && clinicId === null && membershipId === null && coreRole === null) {
+    return { kind: "patient" };
+  }
 
-  return { kind: "core", clinicId, roleLabel };
+  if (
+    buyerType === "clinic_member" &&
+    coreUserId !== null &&
+    clinicId !== null &&
+    membershipId !== null &&
+    coreRole !== null
+  ) {
+    return { kind: "clinic_member", clinicId, roleLabel: CORE_ROLE_LABELS[coreRole] ?? coreRole };
+  }
+
+  return { kind: "inconsistent" };
 }
 
 export default async function AdminOrderDetailPage({
@@ -163,7 +182,18 @@ export default async function AdminOrderDetailPage({
               </div>
             )}
 
-            {origin.kind === "core" && (
+            {origin.kind === "patient" && (
+              <div className="space-y-2 text-sm">
+                <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                  Paciente Odentia
+                </span>
+                <p className="text-muted-foreground">
+                  Pedido de un paciente autenticado de Odentia. Sin atribución a ninguna clínica.
+                </p>
+              </div>
+            )}
+
+            {origin.kind === "clinic_member" && (
               <div className="space-y-3 text-sm">
                 <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
                   Cliente Odentia

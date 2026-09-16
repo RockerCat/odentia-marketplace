@@ -93,7 +93,11 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
               <CustomerIdentityMenu
                 firstName={customer.firstName}
                 lastName={customer.lastName}
-                clinicName={customer.clinicName}
+                // Real clinic name for a clinic member; a fixed, honest
+                // label for a patient — never a false/fabricated clinic.
+                // See the buyer-identity/clinic-attribution audit: a
+                // Patient's own linked clinic is never surfaced here.
+                subtitle={customer.buyerType === "clinic_member" ? customer.clinicName : "Paciente Odentia"}
               />
             ) : (
               <div className="flex items-center gap-1.5 sm:gap-3">

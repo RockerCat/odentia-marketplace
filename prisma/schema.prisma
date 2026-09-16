@@ -103,23 +103,35 @@ model Order {
   // External Core identity, snapshotted at Order creation from the
   // server-side odentia_customer_session at that moment (see
   // src/lib/customer-session.ts) — never a local FK, since Core and
-  // Marketplace are separate databases/projects. NULL on both together
-  // means a guest order; non-null on both together means a Core-attributed
-  // one — there is no third state (see the CHECK constraint added in this
-  // column's own migration, order_core_attribution_pair).
+  // Marketplace are separate databases/projects.
   coreUserId      String?
-  // Core's clinic id. Kept alongside coreUserId (never alone) so a future
-  // "purchases by clinic" query never needs anything beyond this table —
-  // see the (clinicId, createdAt) index below.
+  // Explicit buyer-identity discriminator: null (guest), "patient", or
+  // "clinic_member" — see the order_buyer_attribution_shape CHECK
+  // constraint (20260916... migration) for the exact three shapes this
+  // enforces. BUYER IDENTITY (who placed this order) is deliberately
+  // separate from CLINIC ATTRIBUTION (which clinic, if any, it counts
+  // toward): a "patient" order always has coreUserId set and clinicId/
+  // membershipId/coreRole all null — a real Odentia identity with
+  // structurally NO clinic attribution, never a false membership.
+  buyerType       String?
+  // Core's clinic id — ONLY ever set for buyerType = "clinic_member".
+  // Kept alongside coreUserId (never alone) so a future "purchases by
+  // clinic" query never needs anything beyond this table — see the
+  // (clinicId, createdAt) index below. A Patient's own linked
+  // patients.clinic_id is NEVER written here — see the buyer-identity/
+  // clinic-attribution audit for why that would be a false commercial
+  // attribution, not a technical necessity.
   clinicId        String?
   // The specific clinic_memberships row Core certified at the moment of
   // this Order — finer-grained than clinicId/coreUserId alone, for
-  // audit/dispute resolution only; never queried on its own.
+  // audit/dispute resolution only; never queried on its own. Always null
+  // for a patient order (a Patient has no clinic_memberships row at all).
   membershipId    String?
   // Plain historical snapshot of the role Core certified at purchase time
   // (clinic_admin/dentist/assistant) — analytics/audit only, deliberately
   // a bare string rather than a Prisma enum: it is a fact about the past,
-  // never re-checked for authorization anywhere in this app.
+  // never re-checked for authorization anywhere in this app. Always null
+  // for a patient order — a Patient has no membership_role.
   coreRole        String?
 
   @@index([coreUserId])

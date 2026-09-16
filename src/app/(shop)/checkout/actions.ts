@@ -6,7 +6,39 @@ import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCartItems, clearCart } from "@/lib/cart";
 import { generateOrderAccessToken, grantOrderAccess, hashOrderAccessToken } from "@/lib/order-access";
-import { getCustomerSession } from "@/lib/customer-session";
+import { getCustomerSession, type CustomerIdentity } from "@/lib/customer-session";
+
+// The one place that turns a certified customer identity into the five
+// Order attribution columns — mirrors order_buyer_attribution_shape (see
+// that CHECK constraint's own migration) exactly, so this function can
+// never produce a shape the DB would reject. Guest (null session) and
+// Patient both leave clinicId/membershipId/coreRole null; only a real
+// clinic member ever gets clinic attribution — a Patient's own linked
+// clinic is never read or written here, by construction (PatientIdentity
+// has no clinicId field to read in the first place).
+function resolveOrderAttribution(customerSession: CustomerIdentity | null) {
+  if (!customerSession) {
+    return { coreUserId: null, buyerType: null, clinicId: null, membershipId: null, coreRole: null };
+  }
+
+  if (customerSession.buyerType === "patient") {
+    return {
+      coreUserId: customerSession.coreUserId,
+      buyerType: "patient",
+      clinicId: null,
+      membershipId: null,
+      coreRole: null,
+    };
+  }
+
+  return {
+    coreUserId: customerSession.coreUserId,
+    buyerType: "clinic_member",
+    clinicId: customerSession.clinicId,
+    membershipId: customerSession.membershipId,
+    coreRole: customerSession.role,
+  };
+}
 
 const CheckoutSchema = z.object({
   customerName: z.string().min(1, "El nombre es obligatorio."),
@@ -158,15 +190,12 @@ export async function placeOrderAction(
           accessTokenHash: hashOrderAccessToken(accessToken),
           totalCents,
           status: "PENDIENTE_PAGO",
-          // Trust boundary: these four values come ONLY from the
+          // Trust boundary: these five values come ONLY from the
           // server-verified customerSession above — never from formData,
           // a hidden input, or any other client-supplied value. parsed.data
           // (customerName/Email/Phone/address/notes) stays the independent
           // order/contact snapshot regardless of who's attributed.
-          coreUserId: customerSession?.coreUserId ?? null,
-          clinicId: customerSession?.clinicId ?? null,
-          membershipId: customerSession?.membershipId ?? null,
-          coreRole: customerSession?.role ?? null,
+          ...resolveOrderAttribution(customerSession),
           items: {
             create: items.map((item) => ({
               productId: item.product.id,

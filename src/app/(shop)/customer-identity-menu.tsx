@@ -6,7 +6,12 @@ import { logoutCustomerSession } from "./customer-logout-action";
 type CustomerIdentityMenuProps = {
   firstName: string;
   lastName: string;
-  clinicName: string;
+  // Generic second line — the caller (src/app/(shop)/layout.tsx) decides
+  // its content per buyerType (the real clinicName for a clinic member,
+  // "Paciente Odentia" for a patient) since this component itself stays
+  // buyer-type-agnostic: it only ever renders whatever subtitle it's
+  // given, never inspects or requires a clinic to render at all.
+  subtitle: string;
 };
 
 const CORE_AGENDA_URL = "https://www.odentia.co/agenda";
@@ -53,7 +58,7 @@ function ChevronDownIcon({ className }: { className?: string }) {
 // clearing only the Marketplace side would leave Core still authenticated,
 // and the very next SSO round trip would silently restore this exact
 // session.
-export function CustomerIdentityMenu({ firstName, lastName, clinicName }: CustomerIdentityMenuProps) {
+export function CustomerIdentityMenu({ firstName, lastName, subtitle }: CustomerIdentityMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -75,10 +80,10 @@ export function CustomerIdentityMenu({ firstName, lastName, clinicName }: Custom
         onClick={() => setMenuOpen((open) => !open)}
         aria-haspopup="menu"
         aria-expanded={menuOpen}
-        // Name/clinic text is hidden below sm (see the block itself) — this
-        // label keeps the trigger's accessible name complete at every
+        // Name/subtitle text is hidden below sm (see the block itself) —
+        // this label keeps the trigger's accessible name complete at every
         // breakpoint, mobile included.
-        aria-label={`Menú de ${displayName}, ${clinicName}`}
+        aria-label={`Menú de ${displayName}, ${subtitle}`}
         className="flex items-center gap-2 rounded-lg px-1.5 py-1 hover:bg-foreground/5"
       >
         <span
@@ -89,7 +94,7 @@ export function CustomerIdentityMenu({ firstName, lastName, clinicName }: Custom
         </span>
         <span className="hidden text-left sm:block">
           <span className="block text-sm leading-tight font-medium text-foreground">{displayName}</span>
-          <span className="block text-xs leading-tight text-muted-foreground">{clinicName}</span>
+          <span className="block text-xs leading-tight text-muted-foreground">{subtitle}</span>
         </span>
         {/* Deliberately visible at every breakpoint (unlike Core's own
             chevron, which hides below sm) — on mobile the avatar is the
