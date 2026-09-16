@@ -101,7 +101,7 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
                   href={CORE_LOGIN_URL}
                   className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-foreground/5 sm:border sm:border-border sm:px-4 sm:py-2 sm:text-sm"
                 >
-                  Iniciar sesión
+                  Soy cliente Odentia
                 </a>
                 <a
                   href={CORE_REGISTER_URL}
