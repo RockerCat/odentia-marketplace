@@ -2,7 +2,7 @@
 
 # Odentia Marketplace
 
-**Last Updated:** 2026-09-15 (Shared Cart Checkpoint A closed)
+**Last Updated:** 2026-09-15 (Shared Cart Checkpoint B closed)
 
 ---
 
@@ -127,5 +127,45 @@ re-tested as part of this checkpoint.
 
 **Shared Cart — Checkpoint A: CLOSED.**
 
-**Checkpoint B pending (not designed here):** navigating Core's cart icon
-through SSO to land on Marketplace's `/carrito`.
+**Checkpoint 2026-09-15 — Shared Cart, Checkpoint B — PRODUCTION PASS.**
+Commit `78243e1` (Marketplace); Core's counterpart is commit `fa61bb4` in
+`odentia-core`. Core's cart icon now navigates to Marketplace's existing
+`/auth/sso/start?return_to=/carrito` — after a successful customer SSO, the
+user lands on `/carrito` instead of `/`. Every other Core → Marketplace
+entry point (sidebar, tab bar, `marketplace-card.tsx`) still hits
+`/auth/sso/start` with no `return_to` and still lands on `/`, unchanged.
+
+The destination stays entirely Marketplace-owned: a second, short-lived
+HttpOnly cookie (`odentia_sso_return_to`) mirrors `odentia_sso_state`'s
+exact lifecycle (same callback-scoped path, same TTL, `SameSite=Lax`, same
+`Secure` behavior, single-use — deleted unconditionally in the callback).
+Marketplace accepts exactly one literal destination, `/carrito` — no
+prefix matching, no arbitrary same-origin paths, no absolute/
+protocol-relative URLs. A `start` request without a valid `return_to`
+explicitly clears any stale cookie from an earlier attempt, so a leftover
+cart intent can never contaminate a later, unrelated SSO run. The
+destination is re-validated by exact string comparison only *after* state
+validation, the server-to-server code exchange, payload validation, and
+customer-session creation have all already succeeded — it never
+participates in any of those checks, and every existing failure path still
+falls back to `/` exactly as before. `state`, `redirect_uri`, the one-time
+SSO code, and Core's SSO routes/RPCs/DB were not touched by this
+checkpoint.
+
+**Production smoke manual — 2026-09-15 — PASS:**
+- Core cart icon (empty cart, badge hidden) → SSO → landed on
+  `https://marketplace.odentia.co/carrito`, correctly showing "Tu carrito
+  está vacío." — **PASS**.
+- Generic Marketplace navigation from Core's sidebar (not the cart icon) →
+  SSO → landed on `https://marketplace.odentia.co/` (not `/carrito`) —
+  **PASS**.
+- SSO started with a `return_to` other than the one allowed value → landed
+  on `https://marketplace.odentia.co/` (neither the invalid value nor
+  `/carrito`) — **PASS**.
+
+These three smokes are the only ones executed for this checkpoint.
+
+**Shared Cart — Checkpoint B: CLOSED.**
+
+**Next focus:** Marketplace header/customer identity consistency with
+Core — not yet designed or implemented.
