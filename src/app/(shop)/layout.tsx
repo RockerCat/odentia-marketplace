@@ -6,12 +6,17 @@ import { CustomerIdentityMenu } from "./customer-identity-menu";
 
 // Canonical Core destinations for a guest customer — Core remains the only
 // authority for authentication/registration; Marketplace never implements
-// its own customer login/signup. No `return_to`/`next` param: Core doesn't
-// support an automatic post-login return into Marketplace yet (see the
-// Marketplace header/customer identity audit) — that's explicitly out of
-// scope here, not an oversight.
+// its own customer login/signup or clinic-registration form. No
+// `return_to`/`next` param on the login link: Core doesn't support an
+// automatic post-login return into Marketplace yet (see the Marketplace
+// header/customer identity audit) — that's explicitly out of scope here,
+// not an oversight. CORE_DEMO_URL points at Core's own public commercial
+// funnel (Landing → "Quiero Odentia para mi clínica" → /demo → Prospecto,
+// see odentia-core's CLAUDE.md) — Core's self-service /registro is no
+// longer the commercial entry point, so this header must not link there
+// either.
 const CORE_LOGIN_URL = "https://www.odentia.co/login";
-const CORE_REGISTER_URL = "https://www.odentia.co/registro";
+const CORE_DEMO_URL = "https://www.odentia.co/demo";
 
 // Same SVG geometry/stroke language as the ShoppingCartIcon already
 // approved in odentia-core's src/components/shell/icons.tsx — replicated
@@ -102,16 +107,16 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
             ) : (
               <div className="flex items-center gap-1.5 sm:gap-3">
                 <a
+                  href={CORE_DEMO_URL}
+                  className="hidden rounded-lg bg-primary px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-primary-foreground hover:opacity-90 sm:inline-block sm:px-4 sm:py-2 sm:text-sm"
+                >
+                  Quiero Odentia para mi Clínica
+                </a>
+                <a
                   href={CORE_LOGIN_URL}
                   className="rounded-lg px-2.5 py-1.5 text-xs font-medium text-foreground hover:bg-foreground/5 sm:border sm:border-border sm:px-4 sm:py-2 sm:text-sm"
                 >
-                  Soy cliente Odentia
-                </a>
-                <a
-                  href={CORE_REGISTER_URL}
-                  className="hidden rounded-lg bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 sm:inline-block sm:px-4 sm:py-2 sm:text-sm"
-                >
-                  Registra tu clínica
+                  Ya soy Usuario Odentia
                 </a>
               </div>
             )}
