@@ -108,7 +108,7 @@ export default async function ShopLayout({ children }: LayoutProps<"/">) {
               <div className="flex items-center gap-1.5 sm:gap-3">
                 <a
                   href={CORE_DEMO_URL}
-                  className="hidden rounded-lg bg-primary px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-primary-foreground hover:opacity-90 sm:inline-block sm:px-4 sm:py-2 sm:text-sm"
+                  className="hidden rounded-lg border border-primary bg-background px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-primary hover:bg-primary/10 sm:inline-block sm:px-4 sm:py-2 sm:text-sm"
                 >
                   Quiero Odentia para mi Clínica
                 </a>
