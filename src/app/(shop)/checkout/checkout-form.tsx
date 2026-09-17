@@ -3,7 +3,17 @@
 import { useActionState, useState } from "react";
 import { placeOrderAction } from "./actions";
 
-export default function CheckoutForm() {
+type CheckoutFormProps = {
+  // Pre-fill only, from the certified Core customer session (see
+  // checkout/page.tsx) — undefined for Guest, who sees the fields empty
+  // exactly as before. Rendered as defaultValue (uncontrolled), so the user
+  // can edit freely and the value actually submitted is whatever is in the
+  // input at submit time, never re-imposed from the session.
+  initialCustomerName?: string;
+  initialCustomerEmail?: string;
+};
+
+export default function CheckoutForm({ initialCustomerName, initialCustomerEmail }: CheckoutFormProps) {
   const [state, action, pending] = useActionState(placeOrderAction, undefined);
   // Generated once per mount and reused across every resubmission of this
   // same logical checkout attempt (validation errors, stock errors, a
@@ -32,6 +42,7 @@ export default function CheckoutForm() {
           type="text"
           id="customerName"
           name="customerName"
+          defaultValue={initialCustomerName}
           className="w-full"
         />
         {state?.errors?.customerName && (
@@ -47,6 +58,7 @@ export default function CheckoutForm() {
           type="email"
           id="customerEmail"
           name="customerEmail"
+          defaultValue={initialCustomerEmail}
           className="w-full"
         />
         {state?.errors?.customerEmail && (
