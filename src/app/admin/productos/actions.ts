@@ -72,7 +72,7 @@ export async function createProductAction(formData: FormData) {
   }
 
   const product = await prisma.product.create({
-    data: { ...data, slug: slugify(data.name) },
+    data: { ...data, slug: await uniqueSlug(data.name) },
   });
 
   await syncProductOptions(product.id, parseOptions(String(formData.get("options") ?? "")));
@@ -108,7 +108,7 @@ export async function updateProductAction(formData: FormData) {
 
   await prisma.product.update({
     where: { id },
-    data: { ...data, slug: slugify(data.name) },
+    data: { ...data, slug: await uniqueSlug(data.name, id) },
   });
 
   await syncProductOptions(id, parseOptions(String(formData.get("options") ?? "")));
@@ -162,12 +162,20 @@ export async function addProductImageAction(formData: FormData) {
   redirect(`/admin/productos/${productId}/editar?success=Imagen agregada.`);
 }
 
-async function uniqueSlug(name: string): Promise<string> {
+// Two different product names can collapse to the same slugify() output
+// (e.g. "... LIGHT" and "... LIGHT +" both lose the "+"), so every slug
+// assignment — create, update, or bulk import — must go through this to
+// avoid colliding with a sibling product's slug.
+async function uniqueSlug(name: string, excludeId?: string): Promise<string> {
   const base = slugify(name);
   let candidate = base;
   let attempt = 1;
 
-  while (await prisma.product.findUnique({ where: { slug: candidate } })) {
+  while (
+    await prisma.product.findFirst({
+      where: { slug: candidate, ...(excludeId ? { NOT: { id: excludeId } } : {}) },
+    })
+  ) {
     attempt += 1;
     candidate = `${base}-${attempt}`;
   }
